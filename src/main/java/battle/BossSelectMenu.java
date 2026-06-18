@@ -170,10 +170,10 @@ public final class BossSelectMenu implements Scene {
         mkid.render(g);
 
         g.setColor(Color.WHITE);
-        g.setFont(util.Fonts.title(40f));
+        g.setFont(util.Fonts.title(50f));
         drawCentered(g, "UNDERTALE", 100);
-        g.setFont(util.Fonts.title(17f));
-        drawCentered(g, "BOSS FIGHT", 140);
+        g.setFont(util.Fonts.title(22f));
+        drawCentered(g, "BOSS FIGHT", 148);
 
         int x = 150;
         int y = 205;
@@ -183,14 +183,14 @@ public final class BossSelectMenu implements Scene {
         drawRow(g, ROW_MODE, x, y + step * 2, "MODE",   routeLabel());
 
         // Route note.
-        g.setFont(util.Fonts.ui(18f));
+        g.setFont(util.Fonts.ui(22f));
         g.setColor(genocide() ? new Color(0xFF, 0x40, 0x40) : new Color(0x80, 0x80, 0x80));
         drawCentered(g, genocide()
                 ? "* The murderer's route. Bosses fall in one hit and speak differently."
                 : "* The neutral route. Bosses fight you normally.", y + step * 3 + 12);
 
         // Two control-hint rows: the menu keys, then the in-battle keys.
-        g.setFont(util.Fonts.ui(17f));
+        g.setFont(util.Fonts.ui(21f));
         g.setColor(new Color(0xC0, 0xC0, 0xC0));
         drawCentered(g, "Up/Down: Select     Left/Right: Change     Z: Fight", Game.HEIGHT - 52);
         g.setColor(new Color(0x90, 0x90, 0x90));
@@ -200,7 +200,7 @@ public final class BossSelectMenu implements Scene {
 
     private void drawRow(Graphics2D g, int rowId, int x, int y, String label, String value) {
         boolean sel = row == rowId;
-        g.setFont(util.Fonts.ui(28f));
+        g.setFont(util.Fonts.ui(36f));
         // Heart cursor on the selected row.
         if (sel) {
             java.awt.image.BufferedImage heart = util.Assets.sprite("spr_heart_1");

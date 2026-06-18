@@ -51,7 +51,7 @@ public final class BattleMenu extends Entity {
 
     /** Box-text font: large pixel-ish monospaced, like Undertale's menu text. */
     private static final java.awt.Font BOX_FONT =
-            util.Fonts.ui(22f);
+            util.Fonts.ui(28f);
 
     private final InputHandler input;
     private final ActDispatcher act;

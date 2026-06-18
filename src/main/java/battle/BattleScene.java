@@ -401,10 +401,10 @@ public final class BattleScene implements Scene {
         g.fillRect(0, 0, Game.WIDTH, Game.HEIGHT);
 
         g.setColor(Color.WHITE);
-        g.setFont(util.Fonts.title(34f));
+        g.setFont(util.Fonts.title(44f));
         drawCentered(g, "PAUSED", 180);
 
-        g.setFont(util.Fonts.ui(20f));
+        g.setFont(util.Fonts.ui(26f));
         drawCentered(g, "ESC  -  Resume", 250);
         drawCentered(g, "R  -  Return to boss select", 285);
         drawCentered(g, "M  -  Sound: " + (util.Audio.isMuted() ? "OFF" : "ON"), 320);
@@ -417,7 +417,7 @@ public final class BattleScene implements Scene {
     }
 
     private void renderUi(Graphics2D g) {
-        g.setFont(util.Fonts.ui(14f));
+        g.setFont(util.Fonts.ui(18f));
 
         // The white speech bubble shows ONLY the boss's spoken line (boss.dialogue),
         // never notifications/flavor (boss.message). Notifications live in the menu
@@ -430,14 +430,14 @@ public final class BattleScene implements Scene {
         // real game's "FAS  LV 1     HP [bar] 05 / 20"). The player name + LV anchor
         // the left so the HP block no longer hugs the box edge on an empty row.
         int statusY = 410;
-        g.setFont(util.Fonts.ui(16f));
+        g.setFont(util.Fonts.ui(20f));
         g.setColor(Color.WHITE);
         g.drawString(PLAYER_NAME, 60, statusY);
         g.drawString("LV " + G.lv, 175, statusY);
 
         // HP label + fixed-width bar with a proportional fill (any max HP 20 … 999).
         // Dark "missing HP" track, then the yellow current-HP fill over it.
-        g.setFont(util.Fonts.ui(14f));
+        g.setFont(util.Fonts.ui(18f));
         int barX = 320;
         java.awt.image.BufferedImage hpName = util.Assets.sprite("spr_hpname");
         if (hpName != null) {
@@ -468,7 +468,9 @@ public final class BattleScene implements Scene {
         }
 
         // Monster HP header (suppressed when the boss draws its own meter, e.g. EX).
+        // Always white — must not inherit the KR magenta color set just above.
         if (!boss.hideHpHeader) {
+            g.setColor(Color.WHITE);
             g.drawString(boss.stats.name + "  " + Math.max(0, G.monsterhp[G.myself]) + " HP", 40, 30);
         }
 
@@ -502,10 +504,10 @@ public final class BattleScene implements Scene {
         g.setStroke(old);
 
         // The text inside, in the menu's box font, left-aligned with a "* " bullet.
-        g.setFont(util.Fonts.ui(22f));
+        g.setFont(util.Fonts.ui(28f));
         g.setColor(Color.WHITE);
         java.awt.FontMetrics fm = g.getFontMetrics();
-        int lineH = 30;
+        int lineH = 34;
         String body = text.startsWith("*") ? text : "* " + text;
         int textX = x + 36;
         int top = y + 44;
@@ -522,7 +524,7 @@ public final class BattleScene implements Scene {
      * with black text and a little tail pointing left toward the boss sprite.
      */
     private void renderSpeechBubble(Graphics2D g, String text) {
-        g.setFont(util.Fonts.ui(18f));
+        g.setFont(util.Fonts.ui(22f));
         java.awt.FontMetrics fm = g.getFontMetrics();
         int pad = 14;
         int lineH = fm.getHeight();
