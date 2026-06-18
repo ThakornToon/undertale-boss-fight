@@ -163,7 +163,9 @@ java -cp build/classes/java/main:build/resources/main Main
 | Z | Start the fight |
 
 `MODE` chooses NORMAL or GENOCIDE; GENOCIDE seeds a high `murderlv` (≥7) so bosses fall
-in one hit and switch to their genocide dialogue. `MAX HP` picks an LV preset.
+in one hit and switch to their genocide dialogue. `MAX HP` picks an LV preset. A purely
+cosmetic **Monster Kid** paces across the title screen and periodically trips on his face
+([`MonsterKid`](src/main/java/battle/MonsterKid.java)) — no gameplay effect.
 
 **Battle**
 
@@ -288,6 +290,7 @@ UndertaleBossFight/
 │   ├── battle/      The combat box & menus
 │   │   ├── BattleScene        ← assembles a fight, wires Core ↔ Boss
 │   │   ├── BossSelectMenu      ← title menu (BOSS / MAX HP / MODE)
+│   │   ├── MonsterKid          ← decorative title-screen walk-and-trip gag
 │   │   ├── Soul, SoulMode      ← obj_heart (red/blue/green/yellow/purple)
 │   │   ├── BulletBoard, WebBoard  ← idealborder combat box + Muffet's purple web
 │   │   ├── BattleMenu, ActDispatcher

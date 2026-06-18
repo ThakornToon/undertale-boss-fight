@@ -172,6 +172,9 @@ queue; a real typewriter is deferred.
 27–28. **Muffet pet-special** (turns 4/9/15) — 3-beat port matched vs clips 5/10/16:
     slide → cupcake lunge/chomp (border 23) → climb (box grows tall + rocks, web rises
     border 22, vertspiders rappel). Dialogue auto-clears; box snaps back on turn-end frame.
+29. **UX polish** — decorative title-screen **Monster Kid** (`MonsterKid`: walk cycle +
+    `spr_mkid_trip` stumble gag, no gameplay effect) wired into `BossSelectMenu`; Undyne
+    green-spear/block tweaks (`GreenSpear` spawn-dist refactor, `BlockBullet`/`BlockSpear2`).
 
 ---
 
