@@ -42,7 +42,7 @@ public final class Soul extends Entity {
      * Free-move / horizontal speed in px/frame. GML's base soul speed is 2; we
      * run faster so the heart feels snappier and more responsive to steer.
      */
-    public double moveSpeed = 4.0;
+    public double moveSpeed = 6.0;
 
     // Blue-soul jump state (GML: obj_heart movement 2/11/12/13 + jumpstage).
     /** GML jumpstage == 2: the soul is airborne (rising or falling). */

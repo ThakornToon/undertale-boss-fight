@@ -24,13 +24,11 @@ a boss from a menu, seed your own stats, and fight. The goal is a faithful port 
   - [The turn state machine](#the-turn-state-machine-globalmnfight)
   - [GML → Java translation rules](#gml--java-translation-rules)
 - [Project layout](#project-layout)
-- [Adding a new boss](#adding-a-new-boss)
 - [Testing & verification](#testing--verification)
 - [Assets](#assets)
 - [Lessons learned & limitations](#lessons-learned--limitations)
 - [Non-goals / constraints](#non-goals--constraints)
 - [License](#license)
-- [Further reading](#further-reading)
 
 ---
 

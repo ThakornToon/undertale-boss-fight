@@ -64,6 +64,10 @@ public final class BossSelectMenu implements Scene {
     private int hpIdx = 0;          // default 20 HP (LV1 — realistic)
     private boolean genocideMode;   // default false (NORMAL / neutral route)
 
+    /** Decorative Monster Kid pacing (and tripping) along the bottom of the screen. */
+    private final MonsterKid mkid =
+            new MonsterKid(80, Game.WIDTH - 80, Game.HEIGHT - 64);
+
     public BossSelectMenu(Game game) {
         this.game = game;
         this.input = game.input();
@@ -101,6 +105,8 @@ public final class BossSelectMenu implements Scene {
             util.Audio.play(util.Audio.SFX_SELECT);
             startFight();
         }
+
+        mkid.update();
     }
 
     private void change(int dir) {
@@ -159,6 +165,9 @@ public final class BossSelectMenu implements Scene {
     public void render(Graphics2D g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, Game.WIDTH, Game.HEIGHT);
+
+        // Monster Kid paces behind the menu text (drawn first so the text sits on top).
+        mkid.render(g);
 
         g.setColor(Color.WHITE);
         g.setFont(util.Fonts.title(40f));

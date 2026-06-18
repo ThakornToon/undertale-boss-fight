@@ -2,11 +2,11 @@ package bullet.undyne;
 
 import bullet.AttackPattern;
 import core.EntityManager;
-import java.awt.BasicStroke;
-import java.awt.Color;
+import java.awt.AlphaComposite;
+import java.awt.Composite;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import util.Assets;
 import util.GMLHelper;
 
 /**
@@ -44,16 +44,6 @@ public abstract class GreenSpear extends AttackPattern {
     public boolean blocked;
     /** True once the spear has been positioned at its spawn edge (alarm[0] = 1). */
     protected boolean placed;
-    /** Arrow colour: white for the normal spear, yellow for the special feint. */
-    protected Color arrowColor = Color.WHITE;
-    /**
-     * If set (not NaN), the arrow head is drawn pointing this fixed GML angle instead
-     * of toward the centre — the yellow feint's head shows the side it FINALLY comes
-     * from, not its current motion (GML {@code obj_blockbullet2} image_index/truesite).
-     */
-    protected double fixedArrowAngle = Double.NaN;
-    /** The blue end-of-turn finisher spear: drawn bigger, in cyan. */
-    public boolean finisher;
 
     /**
      * The side the player must face to block this spear (0 left · 1 right · 2 below ·
@@ -135,9 +125,8 @@ public abstract class GreenSpear extends AttackPattern {
     protected abstract void step();
 
     /**
-     * Shared draw: a small, short arrow pointing inward (its head shows the side you
-     * must block). The normal spear is white; the special feint ({@link BlockSpear2})
-     * is yellow so the two read as the reference's "two colours".
+     * Draw the arrow sprite for this spear (GML: {@code draw_sprite_ext(spr, image_index, x, y)}).
+     * Subclasses override {@link #arrowSpriteName()} to select the correct sprite frame.
      */
     @Override
     public void render(Graphics2D g) {
@@ -145,34 +134,29 @@ public abstract class GreenSpear extends AttackPattern {
             return;
         }
         float a = (float) Math.min(1, Math.max(0, alpha));
-        AffineTransform old = g.getTransform();
-        Stroke os = g.getStroke();
-
-        if (finisher) {
-            // The blue finisher: a longer cyan spear pointing along its travel.
-            double ang = GMLHelper.point_direction(x, y, cx, cy);
-            g.translate(x, y);
-            g.rotate(-Math.toRadians(ang));
-            g.setColor(new Color(0x40 / 255f, 0xC0 / 255f, 1f, a));
-            g.setStroke(new BasicStroke(5f));
-            g.drawLine(-22, 0, 14, 0);
-            g.fillPolygon(new int[] { 12, 30, 12 }, new int[] { -8, 0, 8 }, 3);
-            g.setStroke(os);
-            g.setTransform(old);
+        BufferedImage img = Assets.sprite(arrowSpriteName());
+        if (img == null) {
             return;
         }
+        Composite oc = g.getComposite();
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, a));
+        g.drawImage(img,
+                (int) Math.round(x - img.getWidth() / 2.0),
+                (int) Math.round(y - img.getHeight() / 2.0), null);
+        g.setComposite(oc);
+    }
 
-        // The head points toward the centre, unless a fixed "final direction" is set.
-        double ang = Double.isNaN(fixedArrowAngle)
-                ? GMLHelper.point_direction(x, y, cx, cy) : fixedArrowAngle;
-        g.translate(x, y);
-        g.rotate(-Math.toRadians(ang));
-        Color c = arrowColor;
-        g.setColor(new Color(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, a));
-        g.setStroke(new BasicStroke(4f));
-        g.drawLine(-7, 0, 4, 0);                                       // short shaft
-        g.fillPolygon(new int[] { 3, 13, 3 }, new int[] { -6, 0, 6 }, 3); // chevron head
-        g.setStroke(os);
-        g.setTransform(old);
+    /**
+     * GML: {@code draw_sprite_ext(spr, image_index, ...)} — which sprite frame to draw.
+     * Default uses the white directional spear ({@code spr_bullet_test_*}) based on site.
+     * {@link BlockSpear2} overrides to use the yellow feint arrow.
+     */
+    protected String arrowSpriteName() {
+        return switch (site) {
+            case 0 -> "spr_bullet_test_l_0";   // from left  (→)
+            case 1 -> "spr_bullet_test_r_0";   // from right (←)
+            case 2 -> "spr_bullet_test_u_0";   // from below (↑)
+            default -> "spr_bullet_test_d_0";  // from above (↓)
+        };
     }
 }

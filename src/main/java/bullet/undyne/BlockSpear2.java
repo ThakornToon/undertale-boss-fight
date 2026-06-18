@@ -7,9 +7,9 @@ import util.GMLHelper;
  * The GREEN-soul "feint" spear (GML: {@code obj_blockbullet2}). It flies <b>straight
  * in</b> from one side, and only when it nears the shield does it quickly <b>relocate</b>
  * around the rim to the <em>opposite</em> side and lunge at the heart from there. The
- * yellow arrow head stays pointing at the side it came from, so the player must block
- * the <b>opposite</b> of where the head points (head right → block left; head up →
- * block down).
+ * yellow arrow always points at the side it will <em>actually</em> strike from
+ * (GML: {@code image_index = truesite = opposite(site)}), so block wherever the head
+ * points (head right → block right; head up → block up).
  *
  * <p>Approach and strike move at a steady speed; the relocate sweep is quick (it is a
  * fast reposition, not a slow curve).
@@ -34,16 +34,20 @@ public final class BlockSpear2 extends GreenSpear {
                        int blockSide, double speedmod, double rating) {
         super(manager, cx, cy, opposite(blockSide), speedmod);
         this.blkSide = blockSide;
-        this.arrowColor = new java.awt.Color(0xFF, 0xD0, 0x00);   // the special = yellow
         this.spawnAng = sideAngle(opposite(blockSide));
         this.blockAng = sideAngle(blockSide);
         this.ang = spawnAng;
-        this.fixedArrowAngle = spawnAng;   // head points back toward the spawn side
     }
 
     @Override
     public int blockSide() {
         return blkSide;
+    }
+
+    /** GML: image_index = truesite = opposite(site) = blkSide — the yellow feint arrow. */
+    @Override
+    protected String arrowSpriteName() {
+        return "spr_bullet_testx_arrow_" + blkSide;
     }
 
     private static int opposite(int side) {

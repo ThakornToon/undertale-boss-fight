@@ -51,6 +51,15 @@ public final class BattleScene implements Scene {
     /** Counts up once the fight is over, driving the return to the boss-select menu. */
     private int endTimer;
 
+    // ---- Player FIGHT attack animation (GML: obj_slice / spr_strike) -----------
+    /** Current frame of the strike overlay; -1 = not playing. */
+    private int strikeFrame = -1;
+    private int strikeTimer = 0;
+    private static final int STRIKE_FRAMES = 6;
+    private static final int STRIKE_TICKS  = 3; // game ticks per animation frame
+    /** Draw the strike sprite at this scale (GML: image_xscale ≈ 1.5–3.5). */
+    private static final int STRIKE_SCALE  = 4; // 14×12 → 56×48 px
+
     // ---- Player-death animation (GML: the soul shatters, then GAME OVER) -------
     /** 0 none · 1 the heart cracks · 2 the shards scatter and fall. */
     private int deathPhase;
@@ -125,6 +134,8 @@ public final class BattleScene implements Scene {
             int dealt = damage.monsterHurt(slot, accuracy);
             if (accuracy > 0) {
                 util.Audio.play(util.Audio.SFX_DAMAGE);   // the strike lands
+                strikeFrame = 0;
+                strikeTimer = 0;
             }
             boss.onDamaged();
             if (damage.isMonsterDefeated(slot)) {
@@ -217,6 +228,15 @@ public final class BattleScene implements Scene {
             return;
         }
 
+        if (strikeFrame >= 0) {
+            if (++strikeTimer >= STRIKE_TICKS) {
+                strikeTimer = 0;
+                if (++strikeFrame >= STRIKE_FRAMES) {
+                    strikeFrame = -1;
+                }
+            }
+        }
+
         feedSoulInput();
 
         // The box widens into the menu/dialogue box on the player turn and the
@@ -305,6 +325,23 @@ public final class BattleScene implements Scene {
         }
     }
 
+    /** GML: obj_slice draw — spr_strike overlay centered on the boss sprite. */
+    private void renderStrike(Graphics2D g) {
+        if (strikeFrame < 0) {
+            return;
+        }
+        java.awt.image.BufferedImage img =
+                util.Assets.sprite("spr_strike_" + strikeFrame);
+        if (img == null) {
+            return;
+        }
+        int w = img.getWidth()  * STRIKE_SCALE;
+        int h = img.getHeight() * STRIKE_SCALE;
+        int cx = Game.WIDTH / 2;
+        int cy = 120; // GML: mons.y — upper centre where the boss sprite sits
+        g.drawImage(img, cx - w / 2, cy - h / 2, w, h, null);
+    }
+
     /** The death scene: black screen, the breaking heart, then the falling shards. */
     private void renderDeath(Graphics2D g) {
         if (deathPhase == 1) {
@@ -351,6 +388,7 @@ public final class BattleScene implements Scene {
             return;
         }
         entities.renderAll(g);
+        renderStrike(g);
         renderUi(g);
         if (paused) {
             renderPauseOverlay(g);

@@ -38,10 +38,10 @@ public final class BattleMenu extends Entity {
     // GML: the four bottom-row command button sprites. Frame 0 is the yellow
     // highlighted (selected) face; frame 1 is the orange idle face with its icon.
     private static final String[] BUTTON_IDLE = {
-        "spr_fightbt_1", "spr_actbt_center_1", "spr_itembt_1", "spr_mercybutton_normal"
+        "spr_fightbt_1", "spr_actbt_center_1", "spr_itembt_1", "spr_sparebt_1"
     };
     private static final String[] BUTTON_SEL = {
-        "spr_fightbt_0", "spr_actbt_center_0", "spr_itembt_0", "spr_mercybutton_normal_0"
+        "spr_fightbt_0", "spr_actbt_center_0", "spr_itembt_0", "spr_sparebt_0"
     };
     /** Button sprite size (110x40) and the x of each across the 640px row. */
     private static final int BTN_W = 110;
