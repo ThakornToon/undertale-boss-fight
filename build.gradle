@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'Project'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // OGG Vorbis playback. The stock JVM has no Vorbis codec, so the ~300 mus_*.ogg
+    // tracks were mute. These jars register a javax.sound SPI that decodes OGG to
+    // PCM. Vendored under libs/ so the build needs no network at compile/run time.
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+application {
+    mainClass = 'Main'
+}
+
+test {
+    useJUnitPlatform()
+    // Keep the test run silent — bosses start music/SFX in setup(); muting avoids
+    // opening audio lines on the test JVM (and any stray sound during CI).
+    systemProperty 'undertale.muteAudio', 'true'
+}
