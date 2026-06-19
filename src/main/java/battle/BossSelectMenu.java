@@ -19,7 +19,7 @@ import java.awt.Graphics2D;
  * <ul>
  *   <li><b>BOSS</b> — which fight to start (only Papyrus is implemented yet).</li>
  *   <li><b>MAX HP</b> — starting max HP, with realistic LV presets (20 = LV1 … 99 =
- *       LV20) plus a sandbox 999.</li>
+ *       LV20) plus sandbox 999 and 9999.</li>
  *   <li><b>MODE</b> — <b>NORMAL</b> or <b>GENOCIDE</b>. GENOCIDE seeds a high murder
  *       level ({@code global.murderlv}) so bosses fall in one hit and switch to their
  *       genocide behaviour and dialogue (e.g. Papyrus's "I believe in you" speech),
@@ -35,8 +35,8 @@ public final class BossSelectMenu implements Scene {
 
     private static final GlobalState G = GlobalState.get();
 
-    /** Realistic LV→HP presets (UT: maxhp = 16 + 4·LV up to LV19, 99 at LV20) + sandbox. */
-    private static final int[] MAX_HP = { 20, 24, 32, 44, 60, 76, 92, 99, 999 };
+    /** Realistic LV→HP presets (UT: maxhp = 16 + 4·LV up to LV19, 99 at LV20) + sandbox (999, 9999). */
+    private static final int[] MAX_HP = { 20, 24, 32, 44, 60, 76, 92, 99, 999, 9999 };
 
     /** GENOCIDE seeds these stats; NORMAL is the LV1 neutral baseline. */
     private static final int GENOCIDE_LV = 20;
