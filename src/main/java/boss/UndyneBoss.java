@@ -42,8 +42,9 @@ public final class UndyneBoss extends Boss {
     // Combat boxes (GML SCR_BORDERSETUP 12/13/14, hand-tuned to the references).
     private static final double[] GREEN_BOX = { 247, 393, 175, 321 };
     private static final double[] FOLLOW_BOX = { 240, 400, 165, 331 };
-    // Rising-spears: a small box — you slip between 3 columns to dodge.
-    private static final double[] RISE_BOX = { 262, 378, 216, 322 };
+    // Rising-spears: a narrow box (GML border 12 = room/2 ± 40, 80px wide) so the 3
+    // columns sit tight together and you can't just slip off to the side to dodge.
+    private static final double[] RISE_BOX = { 280, 360, 216, 322 };
 
     private UndyneBody ubody;
 

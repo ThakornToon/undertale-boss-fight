@@ -150,6 +150,7 @@ public final class SpearBlocker extends AttackPattern {
             if (d <= BLOCK_R && blockSide == s.blockSide()) {
                 manager.destroy(s);   // a blocked spear vanishes at once (no fade)
                 flash = 5;
+                util.Audio.play("/audio/snd_bell.wav");  // GML: snd_play(sound0=snd_bell)
                 return;
             }
             if (d <= HIT_R) {

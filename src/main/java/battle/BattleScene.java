@@ -60,6 +60,13 @@ public final class BattleScene implements Scene {
     /** Draw the strike sprite at this scale (GML: image_xscale ≈ 1.5–3.5). */
     private static final int STRIKE_SCALE  = 4; // 14×12 → 56×48 px
 
+    // ---- Boss HP meter (top-right corner, drains to match damage dealt) --------
+    /** The HP value the bar currently shows; eases down to the real monster HP so a
+     *  FIGHT hit visibly drains the bar. -1 = uninitialised (snap to actual). */
+    private double bossHpShown = -1;
+    /** Fraction of the gap closed each frame while the bar drains (ease-out). */
+    private static final double HP_DRAIN_EASE = 0.18;
+
     // ---- Player-death animation (GML: the soul shatters, then GAME OVER) -------
     /** 0 none · 1 the heart cracks · 2 the shards scatter and fall. */
     private int deathPhase;
@@ -237,6 +244,8 @@ public final class BattleScene implements Scene {
             }
         }
 
+        updateBossHpBar();
+
         feedSoulInput();
 
         // The box widens into the menu/dialogue box on the player turn and the
@@ -323,6 +332,67 @@ public final class BattleScene implements Scene {
             double vy = -Math.abs(Math.sin(Math.toRadians(ang)) * sp) - 1.5;
             shards.add(new double[] { deathX, deathY, vx, vy, i % 4 });
         }
+    }
+
+    /**
+     * Ease the displayed boss HP toward the real value every frame. A landed FIGHT
+     * hit lowers {@code monsterhp} instantly; the bar then slides down to it so the
+     * loss reads as an animation. HP going *up* (a phase transition that resets the
+     * meter, e.g. Undyne) snaps immediately rather than crawling upward.
+     */
+    private void updateBossHpBar() {
+        double target = Math.max(0, G.monsterhp[G.myself]);
+        if (bossHpShown < 0 || target >= bossHpShown) {
+            bossHpShown = target;            // first frame / HP raised: snap
+            return;
+        }
+        bossHpShown += (target - bossHpShown) * HP_DRAIN_EASE;
+        if (bossHpShown - target < 0.5) {
+            bossHpShown = target;            // close enough: settle on the exact value
+        }
+    }
+
+    // The corner meter: x is right-anchored, so only the width/height/margins live here.
+    private static final int HPBAR_W = 110;
+    private static final int HPBAR_H = 14;
+    private static final int HPBAR_MARGIN = 18;
+
+    /**
+     * The boss HP meter in the top-right corner: a green bar over a dark track with
+     * the remaining HP counted out above it. The bar length follows {@link #bossHpShown},
+     * so a hit drains it smoothly. Skipped for bosses that draw their own meter
+     * ({@code hideHpHeader}, e.g. Mettaton EX).
+     */
+    private void renderBossHpBar(Graphics2D g) {
+        if (boss.hideHpHeader) {
+            return;
+        }
+        int max = G.monstermaxhp[G.myself];
+        if (max <= 0) {
+            return;
+        }
+        double frac = util.GMLHelper.clamp(bossHpShown / (double) max, 0.0, 1.0);
+
+        int barX = Game.WIDTH - HPBAR_W - HPBAR_MARGIN;
+        int barY = HPBAR_MARGIN + 18;        // leave room for the number above
+
+        // Dark track, then the green fill.
+        g.setColor(new Color(0x40, 0x00, 0x00));
+        g.fillRect(barX, barY, HPBAR_W, HPBAR_H);
+        g.setColor(new Color(0x00, 0xC0, 0x10));
+        g.fillRect(barX, barY, (int) Math.round(HPBAR_W * frac), HPBAR_H);
+
+        // Boss name (left of the bar) and the remaining HP counting down above it.
+        g.setFont(util.Fonts.ui(20f));
+        g.setColor(Color.WHITE);
+        String name = boss.stats.name;
+        int nameW = g.getFontMetrics().stringWidth(name);
+        g.drawString(name, barX - nameW - 8, barY + HPBAR_H - 2);
+
+        String hp = String.valueOf((int) Math.ceil(bossHpShown));
+        int hpW = g.getFontMetrics().stringWidth(hp);
+        g.setColor(new Color(0xFF, 0x00, 0x00));
+        g.drawString(hp, barX + HPBAR_W - hpW, barY - 5);
     }
 
     /** GML: obj_slice draw — spr_strike overlay centered on the boss sprite. */
@@ -467,12 +537,10 @@ public final class BattleScene implements Scene {
             g.drawString("KR", barX + barW + 110, statusY);
         }
 
-        // Monster HP header (suppressed when the boss draws its own meter, e.g. EX).
-        // Always white — must not inherit the KR magenta color set just above.
-        if (!boss.hideHpHeader) {
-            g.setColor(Color.WHITE);
-            g.drawString(boss.stats.name + "  " + Math.max(0, G.monsterhp[G.myself]) + " HP", 40, 30);
-        }
+        // Monster HP meter — drawn in the top-right corner as a draining green bar
+        // with the remaining HP above it (suppressed when the boss draws its own
+        // meter, e.g. EX). renderBossHpBar guards hideHpHeader itself.
+        renderBossHpBar(g);
 
         // End-of-fight banner — always rendered as a notification inside the combat
         // box (a spare win, a wake-up, or any other outcome), never floating over

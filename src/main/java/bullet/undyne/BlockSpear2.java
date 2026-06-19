@@ -44,10 +44,16 @@ public final class BlockSpear2 extends GreenSpear {
         return blkSide;
     }
 
-    /** GML: image_index = truesite = opposite(site) = blkSide — the yellow feint arrow. */
+    /**
+     * GML: image_index = truesite = opposite(site) = blkSide — the yellow feint arrow.
+     * The arrow points in the spear's true travel direction (toward the centre from
+     * {@code blkSide}), matching the white spears' convention. The exported PNG frames
+     * are in reversed order (0 ↓ · 1 ↑ · 2 ← · 3 →), so the site index must be flipped:
+     * blkSide 0 (left, strikes →) → frame 3, 1 → 2, 2 → 1, 3 → 0, i.e. {@code 3 - blkSide}.
+     */
     @Override
     protected String arrowSpriteName() {
-        return "spr_bullet_testx_arrow_" + blkSide;
+        return "spr_bullet_testx_arrow_" + (3 - blkSide);
     }
 
     private static int opposite(int side) {
