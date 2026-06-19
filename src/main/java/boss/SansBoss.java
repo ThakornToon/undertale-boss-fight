@@ -121,18 +121,19 @@ public final class SansBoss extends Boss {
         l(3, "and... (yawn) do literally anything else."),
     };
 
-    /** GML mercy_death: the spare ending. */
+    /** GML mercy_death: the spare ending (the final hit speech). */
     private static final Line[] MERCY_LINES = {
-        l(4, "..."),
-        l(4, "you're sparing me?"),
-        l(1, "finally."),
-        l(3, "buddy.  pal."),
-        l(4, "i know how hard it must be..."),
-        l(4, "to make that choice."),
-        l(4, "to go back on everything you've worked up to."),
-        l(0, "i want you to know...  i won't let it go to waste."),
-        l(0, "..."),
-        l(3, "c'mere, pal."),
+        l(9, "..."),
+        l(9, "..."),
+        l(9, "..."),
+        l(9, "so..."),
+        l(9, "guess that's it, huh?"),
+        l(9, "..."),
+        l(9, "just..."),
+        l(4, "don't say i didn't warn you."),
+        l(1, "welp."),
+        l(4, "i'm going to grillby's."),
+        l(4, "papyrus, do you want anything?"),
     };
 
     private SansBody sansBody;
@@ -165,6 +166,8 @@ public final class SansBoss extends Boss {
     private final List<Line> speech = new ArrayList<>();
     private int speechPos;
     private int speechTimer;
+    /** Only a few specific monologues let the player press Z to advance/skip. */
+    private boolean skippable;
 
     private Clip music;
 
@@ -240,6 +243,7 @@ public final class SansBoss extends Boss {
             sansBody.sweat = 2;
             setMusicVolume(0.05);            // GML: caster_pause(global.batmusic)
             centerSoulRed();
+            skippable = true;                // Z fast-forwards this long monologue
             G.turntimer = speechFrames();
             return;
         }
@@ -544,9 +548,13 @@ public final class SansBoss extends Boss {
         say(lines, SPEECH_FRAMES);
     }
 
-    /** Queue lines at a custom per-line dwell (the ending monologue runs faster). */
-    void monologue(Line[] lines, int framesPerLine) {
+    /**
+     * Queue lines at a custom per-line dwell (the ending monologue runs faster);
+     * {@code skippable} lets the player press Z to advance/skip the lines.
+     */
+    void monologue(Line[] lines, int framesPerLine, boolean skippable) {
         say(lines, framesPerLine);
+        this.skippable = skippable;
     }
 
     void setMusicVolume(double volume) {
@@ -559,6 +567,7 @@ public final class SansBoss extends Boss {
 
     private void say(Line[] lines, int framesPerLine) {
         this.framesPerLine = framesPerLine;
+        this.skippable = false;          // most dialogue can't be skipped
         speech.clear();
         for (Line line : lines) {
             speech.add(line);
@@ -583,13 +592,28 @@ public final class SansBoss extends Boss {
         if (speech.isEmpty() || G.mnfight == core.TurnManager.MENU) {
             return;
         }
-        if (--speechTimer > 0) {
+        boolean skip = skippable && soul != null && soul.confirmPressed;
+        if (skip) {
+            speechTimer = 0;
+        } else if (--speechTimer > 0) {
             return;
         }
         if (speechPos < speech.size() - 1) {
             speechPos++;
             speechTimer = framesPerLine;
             applyLine();
+        } else if (skip) {
+            // On last line with skip: fast-forward lac monologue timer if running,
+            // or end the enemy turn early if it's a speech-only turn (no bullets).
+            if (sansBody != null) {
+                sansBody.skipMonologueTimer();
+            }
+            if (G.mnfight == core.TurnManager.ENEMY_TURN
+                    && sansBody != null && !sansBody.specialRunning()
+                    && manager.count(bullet.Bullet.class) == 0
+                    && G.turntimer > 5) {
+                G.turntimer = 5;
+            }
         }
     }
 

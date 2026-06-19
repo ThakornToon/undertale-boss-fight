@@ -1011,6 +1011,13 @@ public final class SansBody extends BossBody {
         }
     }
 
+    /** Speed up the lac monologue wait when the player skips to the last line. */
+    void skipMonologueTimer() {
+        if (lac == 1 && lacTimer > 0) {
+            lacTimer = 1;
+        }
+    }
+
     /** GML: smashdir → movearm pose (0 down, 1 right, 2 up, 3 left). */
     private void armForSmashdir(int dir) {
         movearm = switch (dir) {
@@ -1404,12 +1411,12 @@ public final class SansBody extends BossBody {
                 sweat = 3;
                 G.faceemotion = 9;
                 G.flag[20] = 0;
-                monologue(SansBoss.MONO_HUFF, 65);
+                monologue(SansBoss.MONO_HUFF, 65, true);
             }
-            case 65 -> monologue(SansBoss.MONO_NOTHING, 68);
-            case 68 -> monologue(SansBoss.MONO_BORED, 71);
-            case 71 -> monologue(SansBoss.MONO_TYPE, 74);
-            case 74 -> monologue(SansBoss.MONO_GIVE_UP, 75);
+            case 65 -> monologue(SansBoss.MONO_NOTHING, 68, true);
+            case 68 -> monologue(SansBoss.MONO_BORED, 71, true);
+            case 71 -> monologue(SansBoss.MONO_TYPE, 74, true);
+            case 74 -> monologue(SansBoss.MONO_GIVE_UP, 75, true);
             case 75 -> {
                 G.faceemotion = 9;
                 boss.clearSpeech();  // no bubble lingering over the dozing-off window
@@ -1435,7 +1442,11 @@ public final class SansBody extends BossBody {
     private static final int END_SPEECH_FRAMES = 55;
 
     private void monologue(SansBoss.Line[] lines, int next) {
-        boss.monologue(lines, END_SPEECH_FRAMES);
+        monologue(lines, next, false);
+    }
+
+    private void monologue(SansBoss.Line[] lines, int next, boolean skippable) {
+        boss.monologue(lines, END_SPEECH_FRAMES, skippable);
         waitThen(lines.length * END_SPEECH_FRAMES + 90, next);
         lac = 1; // inert step (no handler) while the lines play out
     }
@@ -1657,6 +1668,9 @@ public final class SansBody extends BossBody {
             if (buttonLit && soul.confirmPressed) {
                 sleepPhase = 3;
                 boss.setSleepZ("");
+                util.Audio.play(util.Audio.SFX_DAMAGE);
+                G.shakify = 8;
+                manager.add(new ScreenFlash(manager));
                 boss.mercyDeath();
                 return;
             }
