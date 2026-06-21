@@ -21,6 +21,7 @@ public final class BossRegistry {
     public static final int METTATON_NEO = 5;
     public static final int METTATON_EX = 6;
     public static final int MUFFET = 7;
+    public static final int TORIEL = 8;
 
     private BossRegistry() {
     }
@@ -35,6 +36,7 @@ public final class BossRegistry {
             case METTATON_NEO -> MettatonNeoBoss::new;
             case METTATON_EX -> MettatonExBoss::new;
             case MUFFET -> MuffetBoss::new;
+            case TORIEL -> TorielBoss::new;
             default -> PapyrusBoss::new;
         };
         return factory.apply(manager);

@@ -1,9 +1,9 @@
 # Translation Progress Tracker
 
-> **Status — initial release shipped + Muffet.** Core engine, host loop, boss-select
-> menu, and sound system are done. Playable: **Papyrus · Sans · Asgore · Undyne
-> (NORMAL+GENOCIDE) · Mettaton (EX+NEO) · Muffet** — 6 bosses / 7 fight variants.
-> `./gradlew build` → green, **36 tests** pass.
+> **Status — initial release shipped + Muffet + Toriel.** Core engine, host loop,
+> boss-select menu, and sound system are done. Playable: **Toriel · Papyrus · Sans ·
+> Asgore · Undyne (NORMAL+GENOCIDE) · Mettaton (EX+NEO) · Muffet** — 7 bosses / 8 fight
+> variants. `./gradlew build` → green, **44 tests** pass.
 >
 > **Only target left: Asriel** (scripted turn list + transform + SAVE graph). Optional
 > polish: Mettaton `spr_mettstick` segmented-arm art, Muffet paper-distortion /
@@ -58,10 +58,10 @@ src/main/java/
 │            MercySystem, BattleMenu, RatingsMaster (Mettaton EX meter),
 │            ActDispatcher, BossSelectMenu (title screen, seeds run state)
 ├── boss/    Boss, BossBody, Monster, BossRegistry, ScreenFlash, AnnoyingDog,
-│            {Papyrus,Sans,Asgore,Muffet}{Boss,Body}, Undyne{Boss,Body}+UndyneXBody,
+│            {Papyrus,Sans,Asgore,Muffet,Toriel}{Boss,Body}, Undyne{Boss,Body}+UndyneXBody,
 │            Mettaton{Ex,Neo}{Boss,Body}
 ├── bullet/  AttackPattern, Bullet, Generator, PlayerBullet, Shootable, + sub-packages:
-│            bones/ · gaster/ · asgore/ · undyne/ · mettaton/ · muffet/
+│            bones/ · gaster/ · asgore/ · undyne/ · mettaton/ · muffet/ · toriel/
 └── util/    GMLHelper, Assets, Audio (OGG→PCM, caster_* wrapper), Fonts
 ```
 
@@ -86,6 +86,7 @@ pattern.
 
 | Boss | Soul | Turn driver → selector | Win condition | Special hook |
 |---|---|---|---|---|
+| **Toriel** ✅ | RED | `mycommand` 0–100 → 5 attacks (fire helix / hands) | kill (HP≤150 → DEF −140) **or** refuse-to-fight spare | `conversation` counter → relent; Faltering & low-HP softening cut; border 6/7 |
 | **Papyrus** ✅ | BLUE | `fighto` −1→16 (HP gates) | spare only (`mercymod=8000`) | blue-bone "only hurts if moving" |
 | **Sans** ✅ | RED+BLUE | `hit_try`/`part`→`a_type`; `lac` special | turn-gated; spare = FIGHT while asleep | KARMA, custom i-frames, blue slams, sleep |
 | **Asgore** ✅ | RED | `turns` 1→23 loop→20 → generator table | `fivedamage` (HP≤500 → kneel) | broken mercy (hide SPARE); border 29/30 |
@@ -175,11 +176,38 @@ queue; a real typewriter is deferred.
 29. **UX polish** — decorative title-screen **Monster Kid** (`MonsterKid`: walk cycle +
     `spr_mkid_trip` stumble gag, no gameplay effect) wired into `BossSelectMenu`; Undyne
     green-spear/block tweaks (`GreenSpear` spawn-dist refactor, `BlockBullet`/`BlockSpear2`).
+30. **Toriel** (`obj_torielboss`) — the first boss in the menu. `bullet/toriel/*` (FireHelix +
+    FireHelixGen, MiniHelix, ChaseFire, HandBullet; Faltering/`blt_avoidfire` and low-HP
+    softening cut — see `TORIEL.md §0`). `TorielBoss` rolls `mycommand` 0–100 → fire-helix
+    columns (tall border 7) / one-or-two sweeping homing hands (wide border 6); two endings —
+    refuse-to-fight `conversation` route (spared) and the HP≤150 DEF-collapse kill trap, each
+    with its own monologue; GENOCIDE one-hit cold death. `TorielBody` + `TorielBossTest`
+    (9 cases). Registered TORIEL=8. Code review + README/slide-deck refresh (44 tests green).
 
 ---
 
 ## Known simplifications
 
+- **Toriel:** full port of the fire/hands gauntlet (`TORIEL.md`). Five attacks roll off
+  `mycommand` — fire helix / mini helix (tall border 7) · a sparser helix · one hand ·
+  two converging hands (short border 6); the **Faltering** attack (`blt_avoidfire`) and all
+  her low-HP damage-softening / early-turn-end logic are **cut** (bullets deal full damage,
+  the player can die). The sine fire keeps the GML weave (fire helix on the shared `obj_time`
+  clock with the per-flame sign braid; mini-helix on its own `h` counter), with two tweaks: the
+  drop point **drifts slowly left↔right** so the whole weaving wall travels across the box (no
+  fixed safe spot — harder), and the bullettype-10 `blt_floatfire` side columns are **cut**
+  (they sat as static, safe-to-ignore fire hugging the walls), so type 10 is just the helix.
+  **Spare route:** refuse to fight (any non-FIGHT action leaves her HP
+  intact) — a `conversation` counter advances a guilt-trip line, and at 13 she stops
+  attacking and runs the relent monologue → win by mercy. The relent begins inside
+  `chooseAttack`, where `TurnManager` would re-assert `ENEMY_TURN`, so `updateEnding` re-pins
+  `mnfight=-1` each frame. **Kill route:** HP≤150 drops her DEF to −140 (the next hit kills);
+  her death monologue plays. GENOCIDE (`murderlv≥1`) → DEF −9999, one-hit cold death line.
+  One sprite (`spr_torielboss`) drawn behind the box reads as "hands on box" (border 7) or
+  full-body (border 6); body/face-split kneel sprites used for the death scene. `path_hand1/2`
+  were missing from the GML export — the sweep is a reconstructed parabolic arc. Caveat: at
+  NORMAL ATK 0 a FIGHT chips ~1 HP, so killing her by grinding 440 HP is impractical (as in
+  vanilla LV1) — spare her, or use GENOCIDE for the one-shot.
 - **Sans:** sentry shadows → sliding-wall corridors; random blaster phase omitted (fixed
   a_type 12/13); genocide `death_c` kill cutscene not ported (asleep FIGHT = spare ending).
 - **Papyrus:** no FIGHT timing bar (can't be FIGHT-killed); `fighto 16` draws plain bones.

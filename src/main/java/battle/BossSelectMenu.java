@@ -45,10 +45,10 @@ public final class BossSelectMenu implements Scene {
     // Mettaton is one entry with two routes: NORMAL → EX, GENOCIDE → NEO (resolved
     // in startFight). The group here is the NORMAL (EX) default.
     private static final String[] BOSSES =
-            { "PAPYRUS", "SANS", "ASGORE", "UNDYNE", "METTATON", "MUFFET" };
+            { "TORIEL", "PAPYRUS", "SANS", "ASGORE", "UNDYNE", "METTATON", "MUFFET" };
     private static final int[] BOSS_GROUPS = {
-        BossRegistry.PAPYRUS, BossRegistry.SANS, BossRegistry.ASGORE, BossRegistry.UNDYNE,
-        BossRegistry.METTATON_EX, BossRegistry.MUFFET,
+        BossRegistry.TORIEL, BossRegistry.PAPYRUS, BossRegistry.SANS, BossRegistry.ASGORE,
+        BossRegistry.UNDYNE, BossRegistry.METTATON_EX, BossRegistry.MUFFET,
     };
 
     private static final int ROW_BOSS = 0;

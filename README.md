@@ -36,14 +36,15 @@ a boss from a menu, seed your own stats, and fight. The goal is a faithful port 
 
 The Core battle engine, host loop, boss-select menu, and sound system are complete.
 The **initial-release milestone** shipped five bosses — Papyrus, Sans, Asgore, Undyne,
-and Mettaton — and **Muffet** has since been added as the sixth, bringing the new
-**PURPLE web soul**. Across their NORMAL/GENOCIDE variants that's **eight fightable
-encounters**. They were built roughly in order of difficulty
-(Papyrus < Asgore < Mettaton < Undyne < Sans). **Asriel** and any further bosses are
-out of scope for now (see [Background](#background--why-this-exists)).
+and Mettaton — then **Muffet** was added (bringing the new **PURPLE web soul**), and
+most recently **Toriel**, who now sits at the top of the menu as the first boss. Across
+their NORMAL/GENOCIDE variants that's **nine fightable encounters**. They were built
+roughly in order of difficulty (Papyrus < Asgore < Mettaton < Undyne < Sans). **Asriel**
+and any further bosses are out of scope for now (see [Background](#background--why-this-exists)).
 
 | Boss                   | Soul mode | Route | Status                                           |
 |------------------------|---|---|--------------------------------------------------|
+| **Toriel**             | red | any | ✅ Playable — fire-helix & sweeping hands, refuse-to-fight spare
 | **Papyrus**            | blue (gravity/jump) | NORMAL | ✅ Playable                                       |
 | **Sans**               | red + blue | any | ✅ Playable                                       |
 | **Undyne**             | green ↔ red | NORMAL (`obj_undyneboss`) | ✅ Playable                                       |
@@ -54,7 +55,6 @@ out of scope for now (see [Background](#background--why-this-exists)).
 | **Muffet**             | **purple (web)** | any | ✅ Playable — 3-strand web, 16-pattern bullet engine, pet special, telegram spare |
 | **Asriel Dreemurr**    | — | — | ⬜ I think not                                    |
 | **Omega Flowey**       | — | — | ⬜ No way!                                        |
-| **Toriel**       | — | — | ⬜ I won't fight with her                         |
 | **Other**              | — | — | ⬜ If I have time                                 |
 
 
@@ -85,6 +85,12 @@ Undyne — built in rough order of how hard each one was:
 soul mode — the **PURPLE web soul**, where the heart is locked to horizontal strands and
 hops between them — so she exercised the "add a boss without touching Core" design in a
 new way (a new `SoulMode`, a `WebBoard`, and the spider/donut/croissant bullet engine).
+
+**Toriel** came next, and now opens the roster as the first boss you meet. She reuses the
+plain **RED soul** but brings her own `bullet/toriel/` family — the weaving fire-helix
+columns and the sweeping homing hands — plus a second, non-combat way to win: refuse to
+fight long enough and she relents. This port deliberately drops her "holding back" logic,
+so unlike vanilla her bullets deal full damage and the player can actually die.
 
 ---
 
@@ -301,11 +307,11 @@ UndertaleBossFight/
 │   │   ├── Boss, BossBody, Monster, BossRegistry
 │   │   ├── PapyrusBoss/Body, SansBoss/Body, AsgoreBoss/Body
 │   │   ├── UndyneBoss/Body, UndyneXBody, Mettaton{Ex,Neo}Boss/Body
-│   │   ├── MuffetBoss/Body
+│   │   ├── MuffetBoss/Body, TorielBoss/Body
 │   │   └── AnnoyingDog, ScreenFlash
 │   ├── bullet/      Attack patterns & projectiles
 │   │   ├── Bullet, PlayerBullet, AttackPattern, Generator, Shootable
-│   │   └── asgore/ · bones/ · gaster/ · mettaton/ · muffet/ · undyne/   ← per-boss bullets
+│   │   └── asgore/ · bones/ · gaster/ · mettaton/ · muffet/ · toriel/ · undyne/  ← per-boss bullets
 │   └── util/        Assets (sprite/sound cache), Audio, GMLHelper
 ├── src/main/resources/
 │   ├── images/      ~7,500 sprite frames (white line-art on transparent)
@@ -320,7 +326,7 @@ UndertaleBossFight/
 ## Testing & verification
 
 ```bash
-./gradlew test                               # full suite — 36 tests, JUnit 5
+./gradlew test                               # full suite — 44 tests, JUnit 5
 ./gradlew test --tests "boss.AsgoreBossTest" # one class
 ```
 
