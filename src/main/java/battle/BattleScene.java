@@ -51,6 +51,13 @@ public final class BattleScene implements Scene {
     /** Counts up once the fight is over, driving the return to the boss-select menu. */
     private int endTimer;
 
+    // ---- Speech-bubble auto-dismiss --------------------------------------------
+    /** A taunt set for an enemy turn fades on its own so the bubble never lingers the
+     *  whole attack; cutscene-driven lines (mnfight<0) are left for the boss to manage. */
+    private static final int DIALOGUE_HOLD = 100; // ~3.3 s at 30 FPS
+    private String shownDialogue = "";
+    private int dialogueTimer;
+
     // ---- Player FIGHT attack animation (GML: obj_slice / spr_strike) -----------
     /** Current frame of the strike overlay; -1 = not playing. */
     private int strikeFrame = -1;
@@ -231,8 +238,11 @@ public final class BattleScene implements Scene {
             return;
         }
         if (G.hp <= 0) {
-            startDeath();
-            return;
+            // Asriel Part B intercepts death ("But it refused."); otherwise game over.
+            if (!boss.onLethalDamage()) {
+                startDeath();
+                return;
+            }
         }
 
         if (strikeFrame >= 0) {
@@ -256,6 +266,7 @@ public final class BattleScene implements Scene {
         boolean setupTalk = G.mnfight == TurnManager.SETUP; // boss intro speech
         board.menuMode = playerMenu;
         soul.hidden = playerMenu || cutscene || setupTalk;
+        menu.saveButton = boss.wantsSaveButton();
 
         entities.beginStepAll();
         entities.updateAll();
@@ -270,7 +281,30 @@ public final class BattleScene implements Scene {
         entities.endStepAll();
         entities.flush();
 
+        tickDialogueTimer();
         onMnfightChanged();
+    }
+
+    /**
+     * Fade the boss's speech bubble after it has been up a few seconds during an enemy
+     * turn, so a taunt never hangs on screen for the whole attack. Frozen cutscenes
+     * (mnfight &lt; 0, where the boss advances its own lines on confirm) are left alone.
+     */
+    private void tickDialogueTimer() {
+        String d = boss.dialogue;
+        if (d == null || d.isEmpty()) {
+            shownDialogue = "";
+            return;
+        }
+        if (!d.equals(shownDialogue)) {
+            shownDialogue = d;          // a new line just appeared — restart its timer
+            dialogueTimer = DIALOGUE_HOLD;
+            return;
+        }
+        if (G.mnfight == TurnManager.ENEMY_TURN && dialogueTimer > 0 && --dialogueTimer == 0) {
+            boss.dialogue = "";         // the taunt has had its moment; clear the bubble
+            shownDialogue = "";
+        }
     }
 
     /** The soul only takes movement input during the enemy turn. */
@@ -564,6 +598,9 @@ public final class BattleScene implements Scene {
         int w = BANNER_BOX[2];
         int h = BANNER_BOX[3];
 
+        // Black fill so any boss body behind the box is occluded (no see-through).
+        g.setColor(Color.BLACK);
+        g.fillRect(x, y, w, h);
         // The box border, drawn like BulletBoard's 5px white frame.
         java.awt.Stroke old = g.getStroke();
         g.setStroke(new java.awt.BasicStroke(5f));

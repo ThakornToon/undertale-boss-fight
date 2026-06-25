@@ -1,0 +1,3731 @@
+@startuml
+class boss.UndyneXBody {
+- {static} GlobalState G
+- {static} double SCALE
+~ {static} int BODY_X
+~ {static} int BODY_Y
+- double siner
++ double dim
++ boolean fadeOut
+- double fade
++ <<Create>> UndyneXBody(EntityManager)
++ boolean faded()
++ void update()
++ void render(Graphics2D)
+- void sprite(Graphics2D,String,double,double,int,double)
+- void drawExt(Graphics2D,BufferedImage,double,double,int,double,double,double)
+- {static} Composite setAlpha(Graphics2D,float)
+- {static} void restore(Graphics2D,Composite)
+}
+
+
+abstract class bullet.Bullet {
+# Soul soul
++ boolean blue
++ double osc
++ double oscmin
++ double oscmax
+# double ystart
+# boolean drawn
+# <<Create>> Bullet(EntityManager,Soul)
+# double halfWidth()
+# {abstract}double boxTop()
+# {abstract}double boxBottom()
+# boolean soulMoving()
+# void onHitSoul()
+# boolean collidesSoul()
++ void update()
+# void oscillate()
+# void markDrawnIfOnscreen()
+# void cullOffscreen()
+}
+
+
+class bullet.asgore.HelixFireGen {
+- Soul soul
++ double mys
++ double mysadd
++ double mysv
++ double mysf
+- double selfSpeed
+- double selfSpeed2
+- int timer
+- int count
++ <<Create>> HelixFireGen(EntityManager,Soul)
++ void update()
+- void spawn(double,double)
++ void render(Graphics2D)
+}
+
+
+class bullet.asriel.SwordArm {
+- Soul soul
+- AsrielBody body
+- int side
+- int dmgVal
+- int f
+- boolean finale
+- float smear
+- double myLean
+- {static} int WIND
+- {static} int FIN_HOLD
+- {static} int PLUNGE
+- {static} int HOLD
+- {static} int RECOVER
+- {static} double REST_DEG
+- {static} double PLUNGE_DEPTH
++ <<Create>> SwordArm(EntityManager,Soul,AsrielBody,int,int)
+- double handX()
+- double handY()
+- double boxCenterX()
+- double boxThird()
++ boolean busy()
++ double lean()
++ void slash(boolean)
+- int strikeStart()
+- int strikeEnd()
+- int doneFrame()
++ void update()
+- double plungeAmt()
+- {static} double smoothstep(double)
++ void render(Graphics2D)
+- void draw(Graphics2D,BufferedImage,double,double,double,double,double,int,int)
+}
+
+
+class bullet.asgore.HandBullet {
+- Soul soul
++ int type
+- int armTimer
+- int dropTimer
+- double gravityAccel
+- double imageAlpha
+- boolean moved
+- double fade
+- String sprite
+- List<LinearFire> trail
++ <<Create>> HandBullet(EntityManager,Soul,int)
+- void arm()
++ void update()
+- boolean offscreen()
+- void retargetTrail()
++ void render(Graphics2D)
+}
+
+
+class bullet.mettaton.SegArm {
+- {static} double H
+- double markerT
+- double markerDir
+- boolean pendingMarker
++ <<Create>> SegArm(EntityManager,Soul,double,double)
+# double halfWidth()
+# double boxTop()
+# double boxBottom()
+- double markerX()
++ void update()
++ boolean hitBy(double,double)
++ boolean onShot()
++ int shotRating()
++ void render(Graphics2D)
+}
+
+
+class bullet.asriel.ShockerTarget {
+- Soul soul
+- boolean giga
+- int dmgVal
+- int timer
+- int frame
+- double hue
++ <<Create>> ShockerTarget(EntityManager,Soul,double,boolean,int)
++ void update()
++ void render(Graphics2D)
+- {static} BufferedImage tint(BufferedImage,Color)
+}
+
+
+class core.EventUser {
++ {static} int COUNT
+- Map<Integer,Runnable> handlers
++ void register(int,Runnable)
++ void fire(int)
++ boolean has(int)
+}
+
+
+abstract class bullet.Generator {
++ int rate
++ int count
++ int life
++ int diff
++ int lv
++ int factor
++ int type
++ int hMode
+- int cooldown
+# <<Create>> Generator(EntityManager)
+# {abstract}void emit()
++ void update()
++ void render(java.awt.Graphics2D)
+}
+
+
+class boss.MuffetBoss {
+- {static} double BOX_L
+- {static} double BOX_R
+- {static} double BOX_T
+- {static} double BOX_B
+- boolean murder
+- MuffetBody mbody
+- WebBoard web
+- int turnAmt
+- int atkdown
+- int bribes
+- int struggle
+- int bribePrice
+- boolean introActive
+- int introStep
+- int introTimer
+- {static} String[] INTRO
+- {static} int[] INTRO_FRAMES
+- boolean ending
+- int endStep
+- int endTimer
+- String[] endingLines
+- {static} int END_LINE_FRAMES
+- int hurtTimer
+- int dialogueTimer
+- {static} String[] NORMAL
+- {static} java.util.Map<Integer,String> MURDER
+- {static} String[] END_NORMAL
+- {static} String[] END_MURDER
++ <<Create>> MuffetBoss(EntityManager)
++ String musicPath()
++ void setup()
+- void configureWeb()
+- void centerOnWeb()
++ void chooseAttack()
+- void petSpecial(SpiderBulletGen)
+- String line(int)
++ void onAct(int)
+- void pay()
+- void struggle()
++ void onDamaged()
++ void onDefeat()
++ void update()
+- void updateIntro()
++ boolean introComplete()
+- void beginEnding()
+- void updateEnding()
++ void render(java.awt.Graphics2D)
+}
+
+
+class bullet.mettaton.HeartCore {
+- Soul soul
+- int hitsToEnd
+- int fireInterval
+- int hits
+- double wob
+- int fireTimer
+- double burstAngle
+- int waveQueue
+- int waveDelay
++ <<Create>> HeartCore(EntityManager,Soul,int,int)
++ void update()
+- void fireRing()
++ boolean hitBy(double,double)
++ boolean onShot()
++ int shotRating()
++ void render(Graphics2D)
+}
+
+
+class bullet.muffet.DonutBullet {
++ <<Create>> DonutBullet(EntityManager,Soul)
+# void arm()
+# void motionStep()
+}
+
+class core.GlobalState {
+- {static} GlobalState INSTANCE
++ int mnfight
++ int myfight
++ int turntimer
++ int firingrate
++ int bmenuno
++ int bmenucoord
++ boolean inbattle
++ int attacktype
++ int attacked
++ int hp
++ int maxhp
++ int at
++ int df
++ int lv
++ int xp
++ int inv
++ int km
++ double[] idealborder
++ int border
++ boolean darkify
++ int shakify
++ {static} int MONSTER_SLOTS
++ int[] monsterhp
++ int[] monstermaxhp
++ int[] monsteratk
++ int[] monsterdef
++ int myself
++ int mercy
++ int mercymod
++ int faceemotion
++ int hurtanim
++ int damagetimer
++ int fivedamage
++ int ratings
++ int hope
++ int damage
++ int takedamage
++ int[] flag
++ int[] tempvalue
++ int kills
++ int murderlv
++ int osflavor
++ int battlegroup
+- <<Create>> GlobalState()
++ {static} GlobalState get()
++ void newGame()
++ void enterBattle(int)
+}
+
+
+abstract class boss.Boss {
+# {static} GlobalState G
++ Monster stats
++ BossBody body
++ int turns
++ boolean battleOver
++ boolean hideHpHeader
++ boolean peacefulEnd
++ String banner
++ String message
++ String dialogue
+# Soul soul
+# BulletBoard board
+# DamageSystem damage
+# MercySystem mercy
+# ActDispatcher act
+# <<Create>> Boss(EntityManager,Monster)
++ void attach(Soul,BulletBoard,DamageSystem,MercySystem,ActDispatcher)
++ {abstract}void setup()
++ String musicPath()
++ {abstract}void chooseAttack()
++ void onAct(int)
++ void onSpare()
++ void onDamaged()
++ void onDefeat()
++ boolean introComplete()
++ boolean wantsSaveButton()
++ boolean onLethalDamage()
++ void onSpecial()
+}
+
+
+class bullet.muffet.PetSpecial {
+- {static} int SLIDE_LEN
+- {static} int BITE_LEN
+- {static} double SLIDE_DX
+- {static} double BOX_L
+- {static} double BOX_R
+- {static} double BOX_R_WIDE
+- {static} double BOX_T
+- {static} double BOX_B
+- Soul soul
+- BulletBoard board
+- WebBoard web
+- SpiderBulletGen gen
+- int yadd2
+- boolean fast
+- int phase
+- int timer
+- int biteTimer
+- int climbTimer
+- int spawnTimer
+- double cmX
+- double prevDx
+- double prevDy
+- double baseXmid
+- double baseYzero
+- Cupcake cupcake
++ <<Create>> PetSpecial(EntityManager,Soul,BulletBoard,SpiderBulletGen,int,boolean)
++ void update()
+- void slideBeat()
+- void biteBeat()
+- void climbBeat()
+- void applyShift(double,double)
+- void startClimb()
+- void restore()
++ void render(Graphics2D)
+}
+
+
+class bullet.mettaton.MettLeg2Gen {
+- Soul soul
+- int interval
+- double speed
+- int timer
++ <<Create>> MettLeg2Gen(EntityManager,Soul,int,double)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class bullet.gaster.GasterBlasterGen {
+- Soul soul
+- KarmaTicker karma
++ <<Create>> GasterBlasterGen(EntityManager,Soul,KarmaTicker,int)
++ void update()
+# void emit()
+}
+
+
+class util.Assets {
+- {static} Map<String,BufferedImage> IMAGE_CACHE
+- {static} Map<String,Boolean> MISSING_LOGGED
+- {static} String SPRITE_ROOT
+- <<Create>> Assets()
++ {static} BufferedImage sprite(String)
++ {static} BufferedImage image(String)
+- {static} void logMissingOnce(String)
++ {static} void clearCache()
+}
+
+
+class bullet.toriel.HandBullet {
+- Soul soul
+- int hand
+- int dropVariant
+- HandBullet hand1Ref
++ boolean sweepDone
+- {static} double DIP
+- double pathSpeed
+- double dist
+- double pathLen
+- double t
+- boolean started
+- int dropTimer
+- int inactiveTimer
+- int frame
++ <<Create>> HandBullet(EntityManager,Soul,int,int)
++ void setHand1(HandBullet)
++ void update()
+- void advanceSweep()
+- void placeOnArc(double,double,double,double)
+- void dropFire(double,double)
++ void render(Graphics2D)
+}
+
+
+class boss.AnnoyingDog {
+- {static} GlobalState G
+- {static} int SCALE
+- {static} int FRAME_H
+- Phase phase
+- int surpriseFrame
+- double animTimer
+- int frame
+- double hspeed
++ <<Create>> AnnoyingDog(EntityManager)
++ void eat()
++ void surprise(int)
++ void scoot()
++ void update()
+- void stepAnim(int,double)
+- String spriteName()
++ void render(Graphics2D)
+}
+
+
+enum boss.Phase {
++  EAT
++  SURPRISE
++  SCOOT
+}
+
+class boss.AsrielBoss {
+- {static} double[] BORDER_17
+- {static} double[] BORDER_6
+- {static} double[] BORDER_4
+- AsrielBody abody
+- AsrielBackground background
+- boolean specialnormal
+- int hoped
+- int dreamed
+- boolean transformPending
+- boolean transforming
+- int trStep
+- int trTimer
+- {static} String[] TRANSFORM
+- {static} int[] TRANSFORM_FRAMES
+- {static} int PARTB_FACE
+- boolean partB
+- AsrielFinalBody finalBody
+- boss.asriel.LostSoul activeSoul
+- boolean inLostSoul
+- BossBody soulBody
+- boolean realizing
+- int realStep
+- int realTimer
+- String[] cutLines
+- int[] cutFrames
+- Runnable cutAfter
+- {static} String[] DEATH_TAUNT
+- {static} String[] REALIZATION
+- {static} int[] REALIZATION_FRAMES
+- {static} String[] ASRIEL_REALIZE
+- {static} int[] ASRIEL_REALIZE_FRAMES
+- {static} String[] BREAKDOWN
+- {static} int[] BREAKDOWN_FRAMES
+- boolean breakingDown
+- int bdStep
+- int bdTimer
+- {static} java.util.List<String> SAVE_LABELS
+- {static} java.util.List<Integer> SAVE_IDS
+- {static} String[] TAUNT
++ <<Create>> AsrielBoss(EntityManager)
+- {static} int friendFlagFor(int)
+- java.util.List<String> saveMenuLabels()
++ String musicPath()
++ void setup()
++ void chooseAttack()
+- void spawnAttack(int,boolean,int)
+- {static} String flavorFor(int)
++ void onAct(int)
+- void pray()
+- void dream()
++ void onDamaged()
++ void update()
+- void startTransform()
+- void updateTransform()
+- void enterPartB()
+- void partBChooseAttack()
+- String resonanceLine()
+- void partBOnAct(int)
+- void enterLostSoul(boss.asriel.LostSoul)
+- void freeLostSoul()
+- void struggle()
+- void startRealization()
+- void startCutscene(String[],int[],Runnable)
+- void updateRealization()
+- void onSaveUnlocked()
+- void onAsrielRealized()
+- void updateBreakdown()
+- void startVictory()
++ boolean wantsSaveButton()
++ boolean onLethalDamage()
++ void render(java.awt.Graphics2D)
+- void renderNarration(java.awt.Graphics2D,String)
+- {static} java.util.List<String> wrapNarration(String,int)
+- void enterBox(double[])
+- void centerSoul()
+}
+
+
+interface bullet.Shootable {
+~ boolean hitBy(double,double)
+~ boolean onShot()
+~ int shotRating()
+}
+
+class bullet.mettaton.PlusBlast {
+- {static} int LIFE
+- {static} double ARM
+- {static} double THICK
+- Soul soul
+- int age
+- double len
++ <<Create>> PlusBlast(EntityManager,Soul,double,double)
+- boolean inCross(double,double)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class bullet.undyne.BlueFinisher {
+- Soul soul
++ <<Create>> BlueFinisher(EntityManager,Soul,boolean,double,int)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class boss.AsrielBossTest {
+- {static} GlobalState G
+~ void freshState()
+- {static} BattleScene fight()
+- {static} void runIntro(BattleScene)
+- {static} int playTurn(BattleScene,int)
+~ void setupIsUnkillableAndUnspareable()
+~ void everyGauntletTurnSpawnsBulletsAndEnds()
+~ void prayGrantsHopeAndDreamHeals()
+~ void hyperGonerTransformsIntoPartBAndUnlocksSave()
+~ void everyTurnRendersWithoutError()
+}
+
+
+class bullet.undyne.RiseSpearGen {
+- Soul soul
+- int lastCol
++ <<Create>> RiseSpearGen(EntityManager,Soul,int,int)
+# void emit()
++ void update()
+}
+
+
+class bullet.muffet.SpiderBulletGen {
+- Soul soul
++ int type
++ int dmg
++ int turnAmt
+- List<double[]> queue
+- int bno
+- int fireTimer
+- boolean built
++ <<Create>> SpiderBulletGen(EntityManager,Soul)
+- void sp(int,double,int,int,int)
++ void update()
+- void fire(int,double,int,int)
+- void spawnSpider(SpiderBullet,int,int,double)
++ void render(Graphics2D)
++ void buildPattern()
+}
+
+
+class bullet.bones.BoneArt {
+- {static} Color BLUE_SHAFT
+- {static} int CAP_W
+- {static} int CAP_H
+- <<Create>> BoneArt()
+~ {static} Color shaftColor(boolean)
+~ {static} void cap(Graphics2D,String,boolean,int,int)
+}
+
+
+class battle.WebBoard {
+- {static} Color WEB_PURPLE
++ int type
++ double xmid
++ double xlen
++ double yzero
++ double yspace
++ int yamt
++ double yoff
++ double yadd
++ double yadd2
++ double yz2
++ boolean visible
++ double tilt
+- int tick
++ <<Create>> WebBoard(EntityManager)
++ double lineY(int)
++ void update()
++ void render(Graphics2D)
+}
+
+
+enum battle.SoulMode {
++  RED
++  BLUE
++  BLUE_RIGHT
++  BLUE_UP
++  BLUE_LEFT
++  GREEN
++  YELLOW
++  PURPLE
++ int movement
++ String sprite
+~ <<Create>> SoulMode(int,String)
++ boolean isBlue()
+}
+
+
+class bullet.undyne.FollowSpear2Gen {
+- {static} int NUM
+- {static} double RR
+- Soul soul
+- double curang
+- double rate
+- int cooldown
++ <<Create>> FollowSpear2Gen(EntityManager,Soul,int)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class battle.DamageSystem {
+- {static} GlobalState G
+- {static} double SKILL_FLOOR
++ KarmaTicker karma
++ boolean forcedKill
++ int playerDamageMultiplier
++ int playerMinDamage
++ int fivedamageThreshold
++ void reset()
++ void resolve()
++ void applyPlayerDamage(int)
++ void playerHurt(int)
++ int monsterHurt(int,double)
++ boolean isMonsterDefeated(int)
++ void endStep()
+}
+
+
+abstract class boss.asriel.LostSoul {
++ String name
++ int flag
++ int actsToFree
++ int acts
+# <<Create>> LostSoul(String,int,int)
++ boolean freed()
++ {abstract}BossBody createBody(EntityManager)
++ {abstract}SoulMode soulMode()
++ {abstract}double[] border()
++ {abstract}List<String> actLabels()
++ {abstract}List<Integer> actIds()
++ {abstract}void chooseAttack(EntityManager,Soul)
++ void update(EntityManager,Soul)
++ {abstract}String onAct(int)
++ {abstract}String freedLine()
++ String introLine()
++ String alreadyFreedLine()
+}
+
+
+class battle.BorderSetup {
++ {static} int VIEW_W
++ {static} int VIEW_H
+- {static} double DEF_L
+- {static} double DEF_R
+- {static} double DEF_T
+- {static} double DEF_B
+- <<Create>> BorderSetup()
++ {static} void apply(int,double[])
+}
+
+
+class core.InputHandler {
+- Set<Key> down
+- Set<Key> held
+- Set<Key> prevHeld
++ void poll()
++ boolean held(Key)
++ boolean pressed(Key)
++ boolean released(Key)
++ void keyPressed(KeyEvent)
++ void keyReleased(KeyEvent)
++ void keyTyped(KeyEvent)
++ boolean dispatchKeyEvent(KeyEvent)
+- {static} Key map(int)
+}
+
+
+enum core.Key {
++  LEFT
++  RIGHT
++  UP
++  DOWN
++  CONFIRM
++  CANCEL
++  MENU
++  PAUSE
++  RESTART
++  MUTE
+}
+
+class boss.UndyneBoss {
+- {static} double[] GREEN_BOX
+- {static} double[] FOLLOW_BOX
+- {static} double[] RISE_BOX
+- UndyneBody ubody
+- int order
+- int lesson
+- int ratingb
+- double rating
+- boolean green
+- boolean died
+- boolean phase2
+- boolean finalDeath
+- boolean died2
+- double dim
+- boolean genocide
+- UndyneXBody uxbody
+- boolean genGreen
+- int genTurnsLeft
+- int genLesson
+- int orderb
+- boolean genoDead
+- List<String> cutLines
+- int[] cutFaces
+- int cutIdx
+- int cutTimer
+- Runnable cutThen
+- boolean introDone
+- {static} String[] FLAVOR_HIGH
+- {static} String[] FLAVOR_LOW
+- {static} String[] FLAVOR_RAGE
+- {static} double[] GENO_BIG
++ <<Create>> UndyneBoss(EntityManager)
++ String musicPath()
++ void setup()
+- void startFirstTurn()
++ boolean introComplete()
++ void chooseAttack()
+- {static} boolean isGreenOrder(int)
+- void applyHpGates()
+- void startGreenTurn(int)
+- void startFollowTurn()
+- void startRiseTurn()
+- {static} String taunt(int)
+- String flavorNormal()
+- void choosePhase2()
+- {static} String phase2Taunt(int)
+- void chooseGenocide()
+- void startGenoGreen()
+- void startGenoRed()
+- void beginGenocideDeath()
+- void startGenoMelt()
+- void finishGenoDeath()
++ void onDefeat()
+- void beginReform()
+- void startPhase2()
+- void beginFinalDeath()
+- void finishDeath()
++ void onAct(int)
+- void challenge()
+- void plead()
+- void playCut(String[],int[],Runnable)
+- boolean cutActive()
+- void updateCut()
++ void update()
++ void onSpecial()
++ void render(java.awt.Graphics2D)
+- void enterBox(double[])
+- void centerSoul()
+}
+
+
+class bullet.mettaton.Ex2Gen {
+- Soul soul
+- double speed
+- boolean spawned
++ <<Create>> Ex2Gen(EntityManager,Soul,double)
++ void update()
+- void spawnFormation()
++ void render(Graphics2D)
+}
+
+
+class bullet.asgore.SpearSwipe {
+- {static} Color BLUE
+- {static} Color ORANGE
+- {static} int FRAMES
+- {static} int CONNECT
+- {static} int FLASH_FRAMES
+- {static} int SWING_X
+- {static} int SWING_Y
+- {static} double SWING_SCALE
+- {static} int SWING_ORIGIN_X
+- Soul soul
+- AsgoreBody body
++ int diff
+- int amt
+- double cutspeed
+- int swipewait
+- int initswipewait
+- int flashtimer
+- int typeamt
+- int[] type
+- State state
+- int warnIndex
+- int warnTimer
+- int swing
+- boolean mirror
+- double frame
+- int timer
+- boolean struck
+- int flash
+- {static} Map<String,BufferedImage> TINT_CACHE
++ <<Create>> SpearSwipe(EntityManager,Soul,AsgoreBody,int)
++ void update()
+- void resolveHit()
+- Color swingColor()
++ void render(Graphics2D)
+- void renderWarning(Graphics2D)
+- void drawEye(Graphics2D,Color,int,int)
+- void renderConnectFlash(Graphics2D)
+- void renderSwing(Graphics2D)
+- void drawSwingLayer(Graphics2D,BufferedImage,int)
+- {static} BufferedImage tint(String,Color)
+}
+
+
+enum bullet.asgore.State {
++  WARN
++  WINDUP
++  SWING
++  DONE
+}
+
+abstract class core.Entity {
++ double x
++ double y
++ int depth
++ boolean destroyed
+# EntityManager manager
+# AlarmTimer alarms
+# EventUser events
+# <<Create>> Entity(EntityManager)
++ void tickAlarms()
++ void fireEvent(int)
++ {abstract}void update()
++ {abstract}void render(Graphics2D)
++ void beginStep()
++ void endStep()
++ void onDestroy()
++ void onAlarm(int)
+}
+
+
+class boss.AsgoreBossTest {
+- {static} GlobalState G
+~ void freshState()
+- {static} void runIntro(BattleScene)
+~ void startsWithBrokenMercy()
+~ void enemyTurnsSpawnAttacksAcrossTheGauntlet()
+~ void cannotSpareButFightingLowMakesHimKneel()
+~ void everyAttackRendersWithoutError()
+- {static} void fightOnce(InputHandler,BattleScene)
+- {static} void tapConfirm(InputHandler,BattleScene)
+}
+
+
+class bullet.asriel.AsrielFireGen {
+- Soul soul
+- int dmgVal
+- double sweep
++ <<Create>> AsrielFireGen(EntityManager,Soul,int,int)
+# void emit()
++ void update()
+}
+
+
+class bullet.toriel.MiniHelix {
++ int r
+- double h
++ <<Create>> MiniHelix(EntityManager,Soul)
+# void move()
+}
+
+
+class boss.TorielBody {
+- {static} double SCALE
++ double baseX
++ double baseY
++ String spriteName
++ double shudderX
++ <<Create>> TorielBody(EntityManager)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class bullet.bones.BonePlatform {
++ double len
++ boolean jud
+- int judTimer
+- boolean lock
++ <<Create>> BonePlatform(EntityManager,Soul)
++ {static} BonePlatform hplat(EntityManager,Soul,double,double,double,double)
++ void update()
+- void carrySoul()
+# double boxTop()
+# double boxBottom()
++ void render(Graphics2D)
+}
+
+
+class boss.PapyrusBoss {
+- int truefight
+- int fighto
+- int xfight
+- int insult
+- int hotcha
+- boolean spareOffered
+- boolean murder
+- boolean dying
+- int deathTimer
+- {static} int HEAD_FALL_FRAMES
+- Bullet last
+- Bullet superBone
+- AnnoyingDog dog
+- List<String> speech
+- int speechPos
+- int speechTimer
+- {static} int SPEECH_FRAMES
+- {static} String[] WINDUP_LINES
++ <<Create>> PapyrusBoss(EntityManager)
+- EntityManager mgr()
++ String musicPath()
++ void setup()
++ void chooseAttack()
++ void update()
+- void syncDogPhase()
+- void climbStep()
++ void onAct(int)
++ void onSpare()
++ void onDefeat()
+- void updateDeath()
++ void render(Graphics2D)
+- void say(String)
+- void timeForSpeech()
+- void restBlueSoul()
+- void launchBlueSoul()
+- double left(double)
+- double right(double)
+- void size(double,double,double)
+- void top(double,double,double)
+- void blue()
+- void osc(double,double,double)
+- void layoutMinus1()
+- void layout0()
+- void layout1()
+- void layout2()
+- void layout3()
+- void layout4()
+- void layout5()
+- void layout6()
+- void layout7()
+- void layout8()
+- void layout9()
+- void layout10()
+- void layout11()
+- void layout12()
+- void layout13()
+- void windup()
+- void dogSpecial()
+- void regularAttack()
+- void spareCutscene()
++ boolean introComplete()
+}
+
+
+class bullet.muffet.VertSpider {
+- WebBoard web
++ boolean fast
+- double fakey
+- double fakeyoff
+- int fakeyamt
+- int armTimer
++ <<Create>> VertSpider(EntityManager,Soul)
++ void update()
+# double boxTop()
+# double boxBottom()
+# boolean collidesSoul()
++ void render(Graphics2D)
+}
+
+
+class bullet.mettaton.LightningBullet {
+- {static} double HALF
++ <<Create>> LightningBullet(EntityManager,Soul,double,double,double,double)
+# double halfWidth()
+# double boxTop()
+# double boxBottom()
++ void update()
++ void render(Graphics2D)
+}
+
+
+class bullet.asriel.ShockerBreakerGen {
+- Soul soul
+- boolean hard
+- int dmgVal
+- int timer
+- int i
+- int rr
++ <<Create>> ShockerBreakerGen(EntityManager,Soul,boolean,int)
+- void sweep(double)
+- void giga(double)
++ void update()
++ void render(java.awt.Graphics2D)
+}
+
+
+class bullet.undyne.BlockSpear2 {
+- {static} double SPEED
+- {static} double RELOC_R
+- {static} int RELOC_FRAMES
+- int blkSide
+- double spawnAng
+- double blockAng
+- int phase
+- double rr
+- double ang
+- int relocTimer
++ <<Create>> BlockSpear2(EntityManager,double,double,int,double,double)
++ int blockSide()
+# String arrowSpriteName()
+- {static} int opposite(int)
+- {static} double sideAngle(int)
+# void place()
+- void reposition()
+# void step()
+}
+
+
+class boss.MettatonExBossTest {
+- {static} GlobalState G
+~ void freshState()
+- {static} BattleScene scene()
+~ void statsSoulHeaderAndRatings()
+~ void turnsSetTheTauntsAndRainBombs()
+~ void poseRaisesRatings()
+~ void hpDeathEndingPlaysTheDeathMonologue()
+~ void ratingsVictoryPlaysTheCallInFinale()
+~ void everyTurnRendersWithoutError()
+}
+
+
+class boss.AsrielBody {
+- {static} GlobalState G
+- {static} double SCALE
+~ {static} double HOME_X
+~ {static} double HOME_Y
+- {static} double CAST_X
+- {static} double CAST_Y
+- double siner
+- double rely
+- double armrotL
+- double armrotR
+- float imageAlpha
+- double leanX
+- double leanTilt
+- boolean hideLeftArm
+- boolean hideRightArm
+- boolean casting
+- boolean raiseArms
++ <<Create>> AsrielBody(EntityManager)
++ void startCast()
++ void startCast(boolean)
++ void endCast()
++ void setArmVisibility(boolean,boolean)
++ void setAlpha(float)
++ void setLean(double,double)
++ double leanX()
++ void update()
++ void render(Graphics2D)
+- void part(Graphics2D,String,double,double,double,double,double,int,int)
+- {static} Composite pushAlpha(Graphics2D,float)
+- {static} void popAlpha(Graphics2D,Composite)
+}
+
+
+class bullet.muffet.SpiderBullet {
+# WebBoard web
++ int choice
++ int side
++ double speedfactor
+- int armTimer
+# boolean armed
+# double imageAngleDeg
+# double imageYscale
+# String spriteName
++ <<Create>> SpiderBullet(EntityManager,Soul)
++ void update()
+# void arm()
+# void motionStep()
+# void cullStep()
+# double half()
+# double boxTop()
+# double boxBottom()
+# boolean collidesSoul()
++ void render(Graphics2D)
+}
+
+
+interface core.Scene {
+~ void enter()
+~ void exit()
+~ void update()
+~ void render(Graphics2D)
+}
+
+class battle.BattleMenu {
+- {static} GlobalState G
+- {static} String[] MAIN_BUTTONS
++ boolean saveButton
+- {static} String[] MERCY_OPTIONS
+- {static} String[] BUTTON_IDLE
+- {static} String[] BUTTON_SEL
+- {static} int BTN_W
+- {static} int BTN_H
+- {static} int BTN_Y
+- {static} int[] BTN_X
+- {static} java.awt.Font BOX_FONT
+- InputHandler input
+- ActDispatcher act
+- Phase phase
+- int selected
+- int flashTick
+- java.util.Map<String,BufferedImage> saveTint
++ boolean mercyHidden
+- double fightPos
+- {static} double FIGHT_SPEED
+- Runnable resultNext
+- String localResult
++ java.util.function.DoubleConsumer onFight
++ Runnable onItem
++ Runnable onSpare
++ java.util.function.Supplier<String> flavor
++ <<Create>> BattleMenu(EntityManager,InputHandler,ActDispatcher)
++ void reset()
++ void update()
+- int buttonCount()
+- void updateMain()
+- void updateList(int,java.util.function.IntConsumer)
+- void confirmAct(int)
+- void confirmMercy(int)
+- void enterFightBar()
+- void updateFightBar()
+- void resolveFight(double)
+- void enterResult()
+- void updateResult()
+- void enterPanel(Phase)
++ void render(Graphics2D)
+- void renderButtons(Graphics2D)
+- void renderList(Graphics2D,List<String>)
+- void renderFlavor(Graphics2D,String)
+- void renderResult(Graphics2D)
+- void drawBoxText(Graphics2D,String)
+- void renderFightBar(Graphics2D)
+- BufferedImage rainbow(BufferedImage,String,Color)
+- void drawCursor(Graphics2D,int,int)
+- {static} List<String> wrap(String,int)
+}
+
+
+enum battle.Phase {
++  MAIN
++  ACT
++  ITEM
++  MERCY
++  FIGHTBAR
++  RESULT
+}
+
+class bullet.undyne.GreenSpearGen {
+- List<double[]> queue
+- int spearno
+- double cooldown
++ boolean done
++ double rating
++ double cx
++ double cy
+- {static} double LANE_GAP
++ <<Create>> GreenSpearGen(EntityManager,double,double,double,int)
++ void queue(int,int,double,double)
++ int queued()
++ void update()
+- double laneFor(int)
++ void render(Graphics2D)
+}
+
+
+class bullet.muffet.Croissant {
++ <<Create>> Croissant(EntityManager,Soul)
+# void motionStep()
+# void cullStep()
+}
+
+class core.Game {
++ {static} int WIDTH
++ {static} int HEIGHT
++ {static} double FPS
+- InputHandler input
+- Scene current
+- boolean running
+- int muteToastFrames
++ <<Create>> Game()
++ InputHandler input()
++ void setScene(Scene)
++ void start(String)
+- void loop()
+- void tick()
+- void draw()
+- void drawMuteToast(Graphics2D)
+}
+
+
+class bullet.asriel.HyperGonerGen {
+- {static} int CENTER_X
+- {static} int CENTER_Y
+- {static} int SKULL_X
+- {static} int SKULL_Y
+- Soul soul
+- AsrielBody body
+- int dmgVal
+- Phase phase
+- int t
+- float alpha
+- double facey
+- double facescale
+- double siner
+- int cCounter
+- int flash
+- double xx
+- double yy
+- double xx2
+- double yy2
++ <<Create>> HyperGonerGen(EntityManager,Soul,AsrielBody,int)
++ void update()
+- void vacuum()
+- void complete()
++ void render(Graphics2D)
+- void renderSkull(Graphics2D)
+- void renderVacuum(Graphics2D)
+- void line(Graphics2D,double,double)
+- void part(Graphics2D,String,double,double,double,double)
+}
+
+
+enum bullet.asriel.Phase {
++  FADE_IN
++  PAUSE
++  CONTRACT
++  WOBBLE
++  VACUUM
++  DONE
+}
+
+class bullet.mettaton.CircleBox {
+- {static} double HALF
++ boolean noBoundsCull
++ <<Create>> CircleBox(EntityManager,Soul,double,double,double)
+# double halfWidth()
+# double boxTop()
+# double boxBottom()
++ void update()
++ boolean hitBy(double,double)
++ boolean onShot()
++ void render(Graphics2D)
+}
+
+
+class bullet.asriel.AngelComet {
+- AngelOfDeathGen gen
+- int side
+- float hue
+- int life
+- double[] px
+- double[] py
++ <<Create>> AngelComet(EntityManager,Soul,AngelOfDeathGen,double,double,int)
+# double halfWidth()
+# double boxTop()
+# double boxBottom()
+# boolean collidesSoul()
++ void update()
+- {static} double clamp(double,double,double)
++ void render(Graphics2D)
+- void drawSeg(Graphics2D,int,int,float)
+}
+
+
+class boss.MettatonExBoss {
+- MettatonExBody exbody
+- RatingsMaster ratings
+- int hurtTimer
+- int prevMnfight
+- {static} int END_NONE
+- {static} int END_HP
+- {static} int END_RATINGS
+- int ending
+- int step
+- int timer
+- boolean exploding
+- String[] endLines
+- int[] endFaces
+- int[] endFrames
+- {static} String[] TAUNT
++ <<Create>> MettatonExBoss(EntityManager)
++ String musicPath()
++ void setup()
++ void chooseAttack()
+- void spawnAttackFor(int)
+- void randomAttack()
+- void applyTurnPresentation()
+- boolean qualifies()
++ void onAct(int)
++ void onDamaged()
++ void onDefeat()
+- void beginHpDeath()
+- void beginRatingsVictory()
+- void startEndCutscene()
++ void update()
++ boolean introComplete()
++ void render(Graphics2D)
+- void spawn(core.Entity)
+- void centerSoul()
+}
+
+
+class bullet.mettaton.MettLeg2 {
+- {static} double HALF_H
+- {static} double SLIDE_SPEED
+- {static} double SLIDE_MIN
+- boolean left
+- double length
+- boolean moving
+- boolean yellow
+- double slide
+- double dir
+- {static} java.util.Map<String,BufferedImage> TINT
++ <<Create>> MettLeg2(EntityManager,Soul,double,double,boolean,boolean,double)
+- double innerX()
+# double halfWidth()
+# double boxTop()
+# double boxBottom()
++ void update()
++ boolean hitBy(double,double)
++ boolean onShot()
++ int shotRating()
++ void render(Graphics2D)
+- {static} BufferedImage tinted(String)
+}
+
+
+class core.EntityManager {
+- List<Entity> active
+- List<Entity> addQueue
+- List<Entity> destroyQueue
+- List<Entity> renderOrder
++ T add(T)
++ void destroy(Entity)
++ void with(Class<T>,Consumer<T>)
++ boolean exists(Class<? extends Entity>)
++ int count(Class<? extends Entity>)
++ T nearest(double,double,Class<T>)
++ void beginStepAll()
++ void updateAll()
++ void endStepAll()
++ void renderAll(Graphics2D)
++ void flush()
++ void clear()
+}
+
+
+class bullet.asgore.HelixFire {
++ double s
++ double sf
++ double sv
++ <<Create>> HelixFire(EntityManager,Soul)
+# void move()
+}
+
+
+class util.Audio {
++ {static} String SFX_MOVE
++ {static} String SFX_SELECT
++ {static} String SFX_HURT
++ {static} String SFX_DAMAGE
+- {static} boolean enabled
+- {static} double masterVolume
+- {static} boolean muted
+- {static} Clip music
+- {static} Map<String,Sound> SFX_CACHE
+- <<Create>> Audio()
++ {static} void setEnabled(boolean)
++ {static} boolean isEnabled()
++ {static} void setMasterVolume(double)
++ {static} boolean toggleMute()
++ {static} boolean isMuted()
++ {static} Clip loop(String)
++ {static} void stopMusic()
++ {static} void play(String)
++ {static} void play(String,double)
++ {static} void play(String,double,double)
++ {static} void setVolume(Clip,double)
++ {static} void stop(Clip)
+- {static} Sound decode(String)
+- {static} AudioInputStream toPcm(AudioInputStream)
+- {static} double clamp01(double)
+}
+
+
+class util.Audio$Sound {
+- AudioFormat format
+- byte[] pcm
+- <<Create>> Sound(AudioFormat,byte[])
++ byte[] pcm()
++ AudioFormat format()
+}
+
+
+abstract class bullet.undyne.GreenSpear {
++ int site
++ double speedmod
++ double spawnDist
+# double cx
+# double cy
+# double alpha
++ boolean blocked
+# boolean placed
+# <<Create>> GreenSpear(EntityManager,double,double,int,double)
++ int blockSide()
+# void place()
++ double distanceToCenter()
++ int threatSide()
++ void block()
++ void update()
+# {abstract}void step()
++ void render(Graphics2D)
+# String arrowSpriteName()
+}
+
+
+class battle.RatingsMaster {
+- {static} GlobalState G
++ {static} int VIOLENCE
++ {static} int DISAPPOINT
++ {static} int JUSTICE
++ {static} int ACTION
++ {static} int HYPERACTION
++ {static} int FASHION
++ {static} int FETCHING
++ {static} int GARBAGE
++ {static} int DRAMATIC
++ {static} int WRITING
+- String[] rq
+- int[] rqv
+- double[] rqs
+- double[] rp
+- int[] typeuse
+- int alarm5
+- int accu
+- double siner
+- int checkhp
+- int timeloss
+- int oO
+- int oOb
++ boolean boastmode
++ boolean heel
++ int essay
++ int turns
++ boolean active
++ <<Create>> RatingsMaster(EntityManager)
++ void pushRating(String,int)
++ void addRating(int)
++ void update()
++ void render(Graphics2D)
+- {static} Composite setAlpha(Graphics2D,float)
+- {static} void restore(Graphics2D,Composite)
+}
+
+
+abstract class bullet.AttackPattern {
+# {static} GlobalState G
++ double hspeed
++ double vspeed
++ double gravity
++ double gravityDirection
++ double imageAngle
++ double imageSpeed
++ int dmg
+# <<Create>> AttackPattern(EntityManager)
+# void integrateMotion()
++ void update()
+}
+
+
+class battle.Soul {
+- {static} GlobalState G
++ {static} double HALF
++ SoulMode mode
++ int movement
++ double hspeed
++ double vspeed
++ double yprevious
++ double moveSpeed
++ {static} int AIRBORNE
++ {static} int GROUNDED
++ int jumpStage
+- {static} double JUMP_VELOCITY
+- {static} double FALL_MAX
++ int facing
++ int shieldDir
++ WebBoard web
++ int webYno
++ int webMoving
++ double webSpace
++ boolean shot
++ boolean firedThisFrame
+- {static} int FIRE_RATE
+- int shootCooldown
++ boolean ignoreBorder
++ int slamPain
++ boolean hidden
++ float imageAlpha
++ boolean leftHeld
++ boolean rightHeld
++ boolean upHeld
++ boolean downHeld
++ boolean upPressed
++ boolean downPressed
++ boolean confirmPressed
++ boolean confirmHeld
++ <<Create>> Soul(EntityManager)
++ void setMode(SoulMode)
++ void update()
+- void updateRed()
+- void updateBlue()
+- double blueGravity(double,double,boolean)
+- void resolveBlueFloor(double,double)
++ boolean grounded()
+- void landed()
+- void updateGreen()
+- void updateYellow()
+- void updatePurple()
++ void clampToBorder()
++ void hurt(int)
++ void applySlam(SoulMode)
++ void render(Graphics2D)
+- String spriteForMode()
+- Color colorForMode()
+}
+
+
+class boss.asriel.LostSoulSkelebros {
+- {static} GlobalState G
+- {static} double[] BOX
+- boolean[] done
+- int turn
++ <<Create>> LostSoulSkelebros()
++ BossBody createBody(EntityManager)
++ SoulMode soulMode()
++ double[] border()
++ List<String> actLabels()
++ List<Integer> actIds()
++ void chooseAttack(EntityManager,Soul)
+- void corridorStream(EntityManager,Soul,double[][])
+- void size(EntityManager,Soul,double,double,double)
+- void corridor(EntityManager,Soul,double,double,double)
+- void blueWall(EntityManager,Soul,double,double)
++ String onAct(int)
++ String freedLine()
++ String introLine()
+}
+
+
+class bullet.undyne.BlockBullet {
+- boolean moving
++ <<Create>> BlockBullet(EntityManager,double,double,int,double)
+# String arrowSpriteName()
+# void step()
+}
+
+
+class bullet.mettaton.PlusBomb {
+- {static} double HALF
+- {static} double REACH
+- {static} double CATCH
+- double frame
+- boolean detonated
++ boolean noBoundsCull
++ <<Create>> PlusBomb(EntityManager,Soul,double,double,double)
+# double halfWidth()
+# double boxTop()
+# double boxBottom()
++ void update()
++ boolean hitBy(double,double)
++ boolean onShot()
++ void render(Graphics2D)
+}
+
+
+class battle.BulletBoard {
+- {static} GlobalState G
+- double[] ideal
+- double[] cur
+- {static} double[] MENU_BOX
++ boolean menuMode
++ double climbTop
++ int preset
++ boolean instaSnap
++ double lerpSpeed
++ boolean visible
++ boolean solid
++ double tilt
++ float borderAlpha
++ <<Create>> BulletBoard(EntityManager)
++ void setPreset(int,boolean)
++ void setPreset(int)
++ void instaBorder(double,double,double,double)
++ void slide(double,double,double,double)
++ void shrinkTo(double,double,double,double)
++ void snapToCombat()
++ void update()
+- void writeGlobals()
++ double left()
++ double right()
++ double top()
++ double bottom()
++ void render(Graphics2D)
+}
+
+
+class util.GMLHelper {
+- {static} double DEG2RAD
+- {static} double RAD2DEG
+- <<Create>> GMLHelper()
++ {static} double lengthdir_x(double,double)
++ {static} double lengthdir_y(double,double)
++ {static} double dcos(double)
++ {static} double dsin(double)
++ {static} double point_direction(double,double,double,double)
++ {static} double point_distance(double,double,double,double)
++ {static} double random_range(double,double)
++ {static} double random(double)
++ {static} int irandom(int)
++ {static} int irandom_range(int,int)
++ {static} T choose(T)
++ {static} int choose(int)
++ {static} double clamp(double,double,double)
++ {static} int clamp(int,int,int)
++ {static} int sign(double)
++ {static} double angle_difference(double,double)
++ {static} double approach(double,double,double)
+}
+
+
+class bullet.mettaton.RewindGen {
+- {static} int ROWS
+- Soul soul
+- int interval
+- double speed
+- int timer
+- int row
+- boolean rev
+- boolean tracking
+- double row4Y
++ <<Create>> RewindGen(EntityManager,Soul,int,double)
++ void update()
+- void spawnRow()
+- void reverseAll()
++ void render(Graphics2D)
+}
+
+
+class battle.MonsterKid {
+- {static} int WALK_FRAMES
+- {static} int TRIP_FRAMES
+- {static} int WALK_FRAME_TICKS
+- {static} int TRIP_FRAME_TICKS
+- {static} double SPEED
+- {static} double SCALE
+- {static} double TRIP_CHANCE
+- int leftBound
+- int rightBound
+- int groundY
+- Random rng
+- double x
+- boolean facingRight
+- State state
+- int animFrame
+- int frameTimer
++ <<Create>> MonsterKid(int,int,int)
++ void update()
+- void updateWalk()
+- void updateTrip()
++ void render(Graphics2D)
+}
+
+
+enum battle.State {
++  WALK
++  TRIP
+}
+
+class bullet.undyne.FollowSpear {
+- Soul soul
+- double direction
+- double speed
+- double friction
+- double rotspeed
+- double alpha
+- boolean lunging
++ <<Create>> FollowSpear(EntityManager,Soul,int)
++ void update()
+- boolean collidesSoul()
+~ {static} double segDistance(double,double,double,double,double,double)
++ void render(Graphics2D)
+}
+
+
+class boss.AsrielFinalBody {
+- {static} GlobalState G
+~ {static} double HOME_X
+~ {static} double HOME_Y
+- {static} double SCALE
+- int anim
+- double siner
++ boolean hidden
++ int cry
+- java.util.Map<String,BufferedImage> tintCache
++ <<Create>> AsrielFinalBody(EntityManager)
++ void update()
++ void render(Graphics2D)
+- void renderFace(Graphics2D)
+- void part(Graphics2D,String,double,double,double,double,double,int,int)
+- void tinted(Graphics2D,String,Color,double,double,double,int,int)
+- void part(Graphics2D,BufferedImage,double,double,double,double,int,int)
+- {static} BufferedImage tint(BufferedImage,Color)
+}
+
+
+class battle.BattleScene {
+- {static} GlobalState G
+- {static} int END_HOLD
+- {static} String PLAYER_NAME
+- Game game
+- InputHandler input
+- EntityManager entities
+- TurnManager turns
+- DamageSystem damage
+- MercySystem mercy
+- ActDispatcher act
+- BulletBoard board
+- Soul soul
+- BattleMenu menu
+- Boss boss
+- int prevMnfight
+- int endTimer
+- {static} int DIALOGUE_HOLD
+- String shownDialogue
+- int dialogueTimer
+- int strikeFrame
+- int strikeTimer
+- {static} int STRIKE_FRAMES
+- {static} int STRIKE_TICKS
+- {static} int STRIKE_SCALE
+- double bossHpShown
+- {static} double HP_DRAIN_EASE
+- int deathPhase
+- int deathTimer
+- double deathX
+- double deathY
+- java.util.List<double[]> shards
+- {static} int BREAK_FRAMES
+- {static} int SHATTER_FRAMES
+- boolean paused
+- {static} int HPBAR_W
+- {static} int HPBAR_H
+- {static} int HPBAR_MARGIN
+- {static} int[] BANNER_BOX
++ <<Create>> BattleScene(Game,InputHandler,int)
++ void exit()
+- void wireTurnHooks()
+- void wireMenuHooks()
+- void resolveActOrSpare()
++ Boss boss()
++ int bulletCount()
++ void update()
+- void tickDialogueTimer()
+- void feedSoulInput()
+- void startDeath()
+- void stepDeath()
+- void spawnShards()
+- void updateBossHpBar()
+- void renderBossHpBar(Graphics2D)
+- void renderStrike(Graphics2D)
+- void renderDeath(Graphics2D)
+- void onMnfightChanged()
++ void render(Graphics2D)
+- void renderPauseOverlay(Graphics2D)
+- void drawCentered(Graphics2D,String,int)
+- void renderUi(Graphics2D)
+- void renderEndTextInBox(Graphics2D,String)
+- void renderSpeechBubble(Graphics2D,String)
+- {static} java.util.List<String> wrapText(String,int)
+}
+
+
+class bullet.asgore.SideDam {
+- {static} Color WARN_RED
+- {static} Color WARN_YELLOW
+- Soul soul
++ int side
++ double len
++ int wait
+- int con
+- int waitTimer
+- int floodTimer
+- int eo
+- int blink
++ <<Create>> SideDam(EntityManager,Soul)
++ void update()
+- void spawnFire()
++ void render(Graphics2D)
+}
+
+
+class bullet.undyne.FollowSpearGen {
+- Soul soul
++ <<Create>> FollowSpearGen(EntityManager,Soul,int,int)
+# void emit()
++ void update()
+}
+
+
+class Main {
+- <<Create>> Main()
++ {static} void main(String[])
+}
+
+class bullet.bones.BoneStab {
++ {static} int FROM_BOTTOM
++ {static} int FROM_RIGHT
++ {static} int FROM_TOP
++ {static} int FROM_LEFT
+- KarmaTicker karma
++ int dir
++ int warning
++ double height
++ int retain
+- double extent
+- int timer
+- double racket
+- double jx
+- double jy
++ <<Create>> BoneStab(EntityManager,Soul,KarmaTicker)
++ void update()
+- boolean overlapsSoul()
+- double[] hitRect()
+# double boxTop()
+# double boxBottom()
++ void render(Graphics2D)
+}
+
+
+class boss.MuffetBody {
+- {static} double SCALE
+- {static} int BODY_X
+- {static} int BODY_Y
+- BulletBoard board
+- double siner
+- int anim
+- double[] eye
++ boolean hurt
++ <<Create>> MuffetBody(EntityManager,BulletBoard)
++ void update()
++ void render(Graphics2D)
+- void eyePart(Graphics2D,String,double,double,double,double)
+- void part(Graphics2D,String,double,double,double,double,double,int,int)
+}
+
+
+class bullet.mettaton.SideLegGen {
+- {static} int WARN
+- {static} int ACTIVE
+- Soul soul
+- int t
+- boolean active
+- boolean leftSide
++ <<Create>> SideLegGen(EntityManager,Soul)
+- double center()
+- boolean soulOnActiveSide()
++ void update()
++ void render(Graphics2D)
+}
+
+
+class bullet.asriel.RegStar {
+- double dir
+- double curSpeed
+- double accel
+- double siner
++ <<Create>> RegStar(EntityManager,Soul,double,double,double,int)
+# double halfWidth()
+# double boxTop()
+# double boxBottom()
++ void update()
++ void render(Graphics2D)
+}
+
+
+class core.AlarmTimer {
++ {static} int COUNT
+- {static} int OFF
+- Entity owner
+- int[] alarm
++ <<Create>> AlarmTimer(Entity)
++ void set(int,int)
++ int get(int)
++ void cancel(int)
++ boolean isActive(int)
++ void tick()
+}
+
+
+class bullet.asriel.AngelOfDeathGen {
+- Soul soul
+- int dmgVal
+- int batchInterval
+- int timer
+- {static} double GEN_X
+- {static} double GEN_Y
+- {static} double HAND_OFF
+- double targetX
+- double targetY
++ <<Create>> AngelOfDeathGen(EntityManager,Soul,int,int)
++ double targetX()
++ double targetY()
++ void applyHit()
++ void update()
++ void render(Graphics2D)
+- void drawHandOrb(Graphics2D,double)
+}
+
+
+class boss.AsrielBackground {
++ boolean active
+- double t
+- double[] sx
+- double[] sy
+- double[] shue
+- double[] sphase
+- double[] ssize
++ boolean dark
++ <<Create>> AsrielBackground(EntityManager)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class bullet.asgore.RadialFire {
++ double r
++ double rspeed
++ double ang
++ double angspeed
+- double centerX
+- double centerY
++ <<Create>> RadialFire(EntityManager,Soul)
+# void move()
+}
+
+
+class bullet.mettaton.SolidBlock {
+- {static} double HALF
++ <<Create>> SolidBlock(EntityManager,Soul,double,double,double)
+# double halfWidth()
+# double boxTop()
+# double boxBottom()
++ void update()
++ boolean hitBy(double,double)
++ boolean onShot()
++ int shotRating()
++ void render(Graphics2D)
+}
+
+
+class bullet.mettaton.ParasolGen {
+- Soul soul
+- int perWave
+- int interval
+- double speed
+- int maxWaves
+- boolean scatter
+- int timer
+- int waves
++ <<Create>> ParasolGen(EntityManager,Soul,int,int,double,int,boolean)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class bullet.bones.BoneLoopV {
+- {static} double W
+- {static} double H
+- KarmaTicker karma
++ <<Create>> BoneLoopV(EntityManager,Soul,KarmaTicker)
++ void update()
+# double boxTop()
+# double boxBottom()
++ void render(Graphics2D)
+}
+
+
+class boss.SansBoss {
++ {static} int SPEECH_FRAMES
+- {static} Line[] INTRO_LINES
+~ {static} Line[] OPENING_HUH
+~ {static} Line[] PRE_SPECIAL
+~ {static} Line[] MONO_HUFF
+~ {static} Line[] MONO_NOTHING
+~ {static} Line[] MONO_BORED
+~ {static} Line[] MONO_TYPE
+~ {static} Line[] MONO_GIVE_UP
+- {static} Line[] MERCY_LINES
+- SansBody sansBody
+- int hitTry
+- int hitReached
+- int part
+- boolean nx
+- boolean dodged
+- boolean specialStarted
+- int pendingChain
+- int introPhase
+- int ending
+- int endingHold
+- int sneak
+- List<Line> speech
+- int speechPos
+- int speechTimer
+- boolean skippable
+- Clip music
+- int framesPerLine
++ <<Create>> SansBoss(EntityManager)
+- {static} Line l(int,String)
+- {static} Line lt(int,int,String)
++ void setup()
++ void chooseAttack()
+- void blueAttack()
+- void redAttack()
+- void chainTurn(int)
+- void smasherTurn(int,int[])
+- void applyBorder(int)
+- void centerSoulRed()
+- String flavorLine()
++ void onAct(int)
++ void onDefeat()
++ void onSpare()
+- void startSneakAttack()
++ void mercyDeath()
++ void wakeUp()
+~ void openingDone()
+~ void clearSpeech()
+~ void setSleepZ(String)
++ void update()
+~ void monologue(Line[])
+~ void monologue(Line[],int,boolean)
+~ void setMusicVolume(double)
+- void say(Line[])
+- void say(Line[],int)
+- void applyLine()
+- void stepSpeech()
+- boolean speechDone()
+- int speechFrames()
+- void sayFor(int)
++ void render(Graphics2D)
++ boolean introComplete()
+}
+
+
+class boss.SansBoss$Line {
+~ int face
+~ int torso
+~ String text
+~ <<Create>> Line(int,int,String)
+}
+
+
+class boss.MettatonNeoBossTest {
+- {static} GlobalState G
+~ void freshState()
+~ void statsAndMercy()
+~ void enemyTurnSkipsInstantlyWithNoBullets()
+~ void killingBlowPlaysLongMonologueThenExplodes()
+}
+
+
+class boss.BossRegistry {
++ {static} int PAPYRUS
++ {static} int SANS
++ {static} int ASGORE
++ {static} int UNDYNE
++ {static} int METTATON_NEO
++ {static} int METTATON_EX
++ {static} int MUFFET
++ {static} int TORIEL
++ {static} int ASRIEL
+- <<Create>> BossRegistry()
++ {static} Boss create(int,EntityManager)
+}
+
+
+class bullet.asriel.AsrielFire {
+- double siner
++ <<Create>> AsrielFire(EntityManager,Soul,double,double,double,int)
+# double halfWidth()
+# double boxTop()
+# double boxBottom()
++ void update()
++ void render(Graphics2D)
+}
+
+
+class core.Sequence {
+- int step
+- int lastRunStep
+- Map<Integer,Runnable> actions
++ <<Create>> Sequence()
++ <<Create>> Sequence(int)
++ Sequence at(int,Runnable)
++ int step()
++ void setStep(int)
++ void advance()
++ void advance(int)
++ void update()
++ boolean whenWriterDone(BooleanSupplier)
+}
+
+
+class boss.asriel.LostSoulAlphys {
+- {static} GlobalState G
+- {static} double[] BOX
+- {static} double[] NARROW
+- {static} double[] REWIND
+- {static} int BEATS
+- boolean encourage
+- boolean call
+- boolean nerd
+- int lastBeat
+- int beat
++ <<Create>> LostSoulAlphys()
+- int rollBeat()
++ BossBody createBody(EntityManager)
++ SoulMode soulMode()
++ double[] border()
++ List<String> actLabels()
++ List<Integer> actIds()
++ void chooseAttack(EntityManager,Soul)
+- void playBeat(int,EntityManager,Soul)
++ void update(EntityManager,Soul)
++ String onAct(int)
++ String freedLine()
++ String introLine()
+}
+
+
+class battle.KarmaTicker {
+- {static} GlobalState G
++ {static} int KM_CAP
++ boolean enabled
+- int kmTimer
++ void addKarma(int)
++ void tick()
++ void reset()
+}
+
+
+class boss.SoulJumpTest {
+- {static} GlobalState G
+- {static} double LEFT
+~ void freshState()
+- Soul grounded(EntityManager)
+- double simulateJump(Soul,int)
+~ void fullHeldJumpClearsTheTallBonesButStaysInTheBox()
+~ void tappedJumpIsShorterThanAHeldJump()
+~ void cannotJumpAgainWhileAirborne()
+}
+
+
+class boss.MettatonNeoBoss {
+- MettatonNeoBody nbody
+- boolean dying
+- int step
+- int timer
+- boolean exploding
+- {static} int[] FACE
+- {static} int[] LINE_FRAMES
+- {static} String[] MONOLOGUE
++ <<Create>> MettatonNeoBoss(EntityManager)
++ String musicPath()
++ void setup()
++ void chooseAttack()
++ void onAct(int)
++ void onDefeat()
++ void update()
++ boolean introComplete()
++ void render(Graphics2D)
+}
+
+
+class bullet.mettaton.OrbitRing {
+- {static} double BASE_R
+- {static} double RANGE
+- {static} double TWO_PI
+- Soul soul
+- HeartCore heart
+- int n
+- boolean usePlus
+- double spin
+- boolean[] alive
+- double rot
+- double phase
+- int pendingHit
++ <<Create>> OrbitRing(EntityManager,Soul,HeartCore,int,boolean,double)
+- double radius()
+- double bx(int)
+- double by(int)
++ void update()
++ boolean hitBy(double,double)
++ boolean onShot()
++ void render(Graphics2D)
+}
+
+
+class bullet.asriel.SwordTwinkle {
+- float alpha
+- int life
++ <<Create>> SwordTwinkle(EntityManager,Soul,double,double,int)
+# double halfWidth()
+# double boxTop()
+# double boxBottom()
++ void update()
++ void render(Graphics2D)
+}
+
+
+class boss.AsgoreBoss {
+- {static} double BOX_L
+- {static} double BOX_R
+- {static} double BOX_T_NORMAL
+- {static} double BOX_T_SWIPE
+- {static} double BOX_B
+- int talkX
+- AsgoreBody abody
+- boolean genocide
+- boolean introActive
+- int introStep
+- int introTimer
+- int sliceFlash
+- {static} String[] NARRATION
+- {static} int[] NARRATION_FRAMES
+- {static} int CALM_FACE
+- {static} String[] FAREWELL
+- {static} int[] FAREWELL_FACE
+- {static} int[] FAREWELL_FRAMES
+- {static} String[] TEA
+- {static} int[] TEA_FRAMES
+- boolean ending
+- int endStep
+- int endTimer
+- {static} int[] END_LINE_FRAMES
+- {static} String[] END_LINES
++ <<Create>> AsgoreBoss(EntityManager)
++ String musicPath()
++ void setup()
++ void chooseAttack()
+- void randomLatePick()
+- void decayDefenseLate()
+- void swipe(int)
+- void spawn(core.Entity)
++ void onAct(int)
+- void talk()
++ void onDamaged()
++ void onDefeat()
+- void beginEnding(int)
++ void update()
+- void updateIntro()
+- void updateNeutralIntro(boolean)
+- void updateGenocideIntro(boolean)
+- void nextIntroStep()
+- void startFight()
++ boolean introComplete()
++ void render(Graphics2D)
+- void renderNarration(Graphics2D,String)
+- void renderSlice(Graphics2D)
+- {static} List<String> wrap(String,int)
+- void centerSoul()
+}
+
+
+class boss.asriel.LostSoulDreemurrs {
+- {static} GlobalState G
+- {static} double[] BOX
+- boolean[] done
+- int turn
++ <<Create>> LostSoulDreemurrs()
++ BossBody createBody(EntityManager)
++ SoulMode soulMode()
++ double[] border()
++ List<String> actLabels()
++ List<Integer> actIds()
++ void chooseAttack(EntityManager,Soul)
++ String onAct(int)
++ String freedLine()
++ String introLine()
+}
+
+
+class boss.TorielBossTest {
+- {static} GlobalState G
+~ void freshState()
+- {static} void runToMenu(BattleScene)
+- {static} void runEnemyTurn(BattleScene)
+~ void setsUpAsTheFirstBoss()
+~ void everyAttackTurnSpawnsBulletsAndEnds()
+~ void refusingToFightEventuallySparesHer()
+~ void normalFightCentredHitCapsAt42()
+~ void lowHpCollapsesHerDefense()
+~ void killingHerPlaysTheDeathMonologue()
+~ void genocideIsAOneHitColdDeath()
+~ void everyAttackRendersWithoutError()
+}
+
+
+class boss.UndyneBossTest {
+- {static} GlobalState G
+~ void freshState()
+- {static} void runIntro(BattleScene)
+- {static} double turnBoxTop(BattleScene)
+~ void setupStatsAndCannotBeSpared()
+~ void greenRedScheduleAcrossOrders()
+~ void hpZeroReformsThenFinallyDies()
+~ void genocideRouteKillsHerWithTheUndyingDeath()
+~ void greenSpearQueueAppliesScrSrDefaults()
+}
+
+
+class bullet.asriel.ChaosSaberGen {
+- boolean hard
+- int cadence
+- int maxtime
+- SwordArm left
+- SwordArm right
+- int timer
+- int nextSlash
+- int times
+- int lastSide
+- int lastLastSide
+- boolean finale
+- int finaleTimer
+- boolean boxOpened
+- BulletBoard board
+- AsrielBody body
+- Soul soul
+- int dmg
+- {static} double[] BORDER_6
+- {static} int OPEN_DELAY
+- {static} int STARS_PER_BLADE
++ <<Create>> ChaosSaberGen(EntityManager,Soul,BulletBoard,AsrielBody,boolean,int)
++ void update()
+- void triggerSlash()
+- void releaseStars()
++ void render(java.awt.Graphics2D)
+}
+
+
+class bullet.muffet.Cupcake {
+- {static} int FRAMES
+- double siner
+- float alpha
+- double imageIndex
+- double restY
+- double baseX
+- boolean arrived
++ boolean falling
++ <<Create>> Cupcake(EntityManager)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class bullet.undyne.RiseSpear {
+- {static} int TELE
+- {static} double LAUNCH
+- {static} double SHAFT
+- {static} int HEAD
+- Soul soul
+- double floorY
+- double boxTop
+- int phase
+- int timer
+- double headY
+- double alpha
++ <<Create>> RiseSpear(EntityManager,Soul,double,double,int)
++ void update()
+- boolean collidesSoul()
++ void render(Graphics2D)
+}
+
+
+class bullet.mettaton.SegArmGen {
+- Soul soul
+- int interval
+- double speed
+- int timer
++ <<Create>> SegArmGen(EntityManager,Soul,int,double)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class util.Fonts {
+- {static} Font UI_BASE
+- {static} Font TITLE_BASE
+- {static} Map<String,Font> CACHE
+- <<Create>> Fonts()
++ {static} Font ui(float)
++ {static} Font title(float)
+- {static} Font derive(Font,String,float)
+- {static} Font load(String,int)
+}
+
+
+class bullet.toriel.ChaseFire {
+- int variant
+- HandBullet waitFor
+- double friction
+- boolean started
+- int restTimer
+- int homeTimer
+- boolean bouncedTop
++ <<Create>> ChaseFire(EntityManager,Soul,int)
++ void waitForHand(HandBullet)
+# void move()
+- void stepVariant1()
+- void stepVariant2()
+- void lungeAtSoul(double)
+- void applyFriction()
+- void bounceOffWalls()
+}
+
+
+class bullet.bones.TopBone {
++ <<Create>> TopBone(EntityManager,Soul)
+# double boxTop()
+# double boxBottom()
++ void render(Graphics2D)
+}
+
+class core.TurnManager {
+- {static} GlobalState G
++ {static} int SETUP
++ {static} int MENU
++ {static} int ENTER_ENEMY
++ {static} int ENEMY_TURN
++ {static} int ACT_SPARE
++ {static} int SPECIAL
++ BooleanSupplier introComplete
++ Runnable chooseAttack
++ Runnable resolveActOrSpare
++ Runnable onSpecial
++ void tick()
++ void startPlayerTurn()
++ void endEnemyTurn()
++ boolean isEnemyTurn()
++ boolean isPlayerMenu()
+}
+
+
+class bullet.undyne.RotSpearGen {
+- Soul soul
+- int genType
+- int t
++ <<Create>> RotSpearGen(EntityManager,Soul,int,int)
+# void emit()
++ void update()
+}
+
+
+class bullet.undyne.FollowSpear2 {
+- Soul soul
+- double direction
+- double speed
+- double friction
+- double rotspeed
+- double alpha
+- int timer
+- boolean fade
+- boolean lunging
+- boolean deactivating
++ <<Create>> FollowSpear2(EntityManager,Soul,double,double,boolean,int)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class bullet.bones.BoneWall {
+- KarmaTicker karma
++ double width
++ double height
+- boolean wide
++ <<Create>> BoneWall(EntityManager,Soul,KarmaTicker)
++ void makeWide()
++ void update()
+# double boxTop()
+# double boxBottom()
++ void render(Graphics2D)
+}
+
+
+class bullet.asgore.SineFireGen {
+- Soul soul
++ int lv
+- double s
+- int off
+- int side
+- int fireTimer
+- int sideTimer
++ <<Create>> SineFireGen(EntityManager,Soul,int)
++ void update()
+- void emitFire()
+- void emitSide()
++ void render(Graphics2D)
+}
+
+
+class boss.TorielBoss {
+- {static} double BOX_L
+- {static} double BOX_R
+- {static} double BOX_T6
+- {static} double BOX_T7
+- {static} double BOX_B
+- TorielBody tbody
+- int conversation
+- int hplastturn
+- int mycommand
+- boolean genocide
+- int hurtMag
+- int shudderSign
+- boolean reallyHurt
+- boolean ending
+- boolean spareEnding
+- int lineIdx
+- int lineTimer
+- List<String> endLines
+- List<String> endSprites
++ <<Create>> TorielBoss(EntityManager)
++ String musicPath()
++ void setup()
++ void chooseAttack()
+- void twoHands()
+- void oneHand()
++ void onAct(int)
++ void onDamaged()
++ void onDefeat()
+- void beginRelent()
+- void beginDeath()
++ void update()
+- void updateEnding()
++ void render(java.awt.Graphics2D)
+- {static} int lineFrames(String)
+- {static} String caption(int)
+- {static} String guiltLine(int)
+- void centerSoul()
+}
+
+
+class bullet.undyne.RotSpearRing {
+- Soul soul
+- double cx
+- double cy
+- int num
+- double rr
+- double curang
+- double rotspeed
+- double rotmin
+- boolean dead
++ <<Create>> RotSpearRing(EntityManager,Soul,int,int)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class bullet.asgore.ConvergingFireGen {
+- Soul soul
++ int diff
+- int timer
++ <<Create>> ConvergingFireGen(EntityManager,Soul,int)
++ void update()
+- void wave(int,double,double,double)
++ void render(Graphics2D)
+}
+
+
+class bullet.mettaton.DiscoBall {
+- Soul soul
+- int beams
+- double spin
+- boolean[] beamBlue
+- double rot
++ <<Create>> DiscoBall(EntityManager,Soul,int,double)
+- void randomizeColors()
+- double cx()
+- double cy()
+- boolean soulMoving()
++ void update()
++ boolean hitBy(double,double)
++ boolean onShot()
++ int shotRating()
++ void render(Graphics2D)
+}
+
+
+class boss.asriel.LostSoulBody {
+- List<Part> parts
+- Map<String,BufferedImage> cache
+- double siner
++ <<Create>> LostSoulBody(EntityManager,String,double,int,int)
++ LostSoulBody add(String,double,int,int)
++ void update()
++ void render(Graphics2D)
+- {static} BufferedImage toSilhouette(BufferedImage)
+}
+
+
+class boss.asriel.LostSoulBody$Part {
+- String sprite
+- double scale
+- int cx
+- int cy
+- <<Create>> Part(String,double,int,int)
++ int cx()
++ int cy()
++ double scale()
++ String sprite()
+}
+
+
+class bullet.asgore.HandBulletGen {
+- Soul soul
++ int type
++ <<Create>> HandBulletGen(EntityManager,Soul,int)
++ void update()
+- void hand(int,double,double)
++ void render(Graphics2D)
+}
+
+
+class boss.MettatonNeoBody {
+- {static} GlobalState G
+- {static} double SCALE
+- double bodyX
+- double bodyY
+- {static} java.util.Map<String,int[]> ORIGIN
+- double siner
++ boolean pause
++ boolean shake
++ boolean fadewhite
+- double whiteval
+- boolean fadeComplete
++ <<Create>> MettatonNeoBody(EntityManager)
++ boolean fadeComplete()
++ void update()
++ void render(Graphics2D)
+- void renderFadeWhite(Graphics2D)
+- void draw(Graphics2D,String,double,double,double,double,double,float)
+- {static} int[] origin(String)
+}
+
+
+class bullet.PlayerBullet {
+- {static} double SPEED
+- IntConsumer onScore
++ <<Create>> PlayerBullet(EntityManager,double,double,IntConsumer)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class bullet.bones.SizeBone {
++ <<Create>> SizeBone(EntityManager,Soul)
+# double boxTop()
+# double boxBottom()
++ void render(Graphics2D)
+}
+
+abstract class bullet.toriel.TorielFire {
++ double scale
+# double anim
+# <<Create>> TorielFire(EntityManager,Soul)
+# {abstract}void move()
++ void update()
+- double half()
+# boolean collidesSoul()
+- void cullFarOffscreen()
+# double boxTop()
+# double boxBottom()
++ void render(Graphics2D)
+}
+
+
+class bullet.asgore.RandomHandGen {
+- Soul soul
++ int factor
+- int timer
++ <<Create>> RandomHandGen(EntityManager,Soul,int)
++ void update()
+- void hand(int,double,double)
++ void render(Graphics2D)
+}
+
+
+class bullet.mettaton.MixDropGen {
+- Soul soul
+- int perWave
+- int interval
+- double speed
+- double xMinFrac
+- double xMaxFrac
+- boolean plus
+- boolean box
+- int timer
++ <<Create>> MixDropGen(EntityManager,Soul,int,int,double,double,double,boolean,boolean)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class battle.BossSelectMenu {
+- {static} GlobalState G
+- {static} int[] MAX_HP
+- {static} int GENOCIDE_LV
+- {static} int GENOCIDE_AT
+- {static} String[] BOSSES
+- {static} int[] BOSS_GROUPS
+- {static} int ROW_BOSS
+- {static} int ROW_HP
+- {static} int ROW_MODE
+- {static} int ROW_COUNT
+- Game game
+- InputHandler input
+- int row
+- int bossIdx
+- int hpIdx
+- boolean genocideMode
+- MonsterKid mkid
++ <<Create>> BossSelectMenu(Game)
++ void enter()
++ void update()
+- void change(int)
+- {static} int wrap(int,int)
+- void startFight()
+- boolean genocide()
++ void render(Graphics2D)
+- void drawRow(Graphics2D,int,int,int,String,String)
+- void drawCentered(Graphics2D,String,int)
+- String routeLabel()
+}
+
+
+class boss.ScreenFlash {
+- {static} int LIFE
+- int life
+~ <<Create>> ScreenFlash(EntityManager)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class boss.Monster {
+- {static} GlobalState G
++ int slot
++ String name
++ int maxhp
++ int atk
++ int def
++ int xpreward
++ <<Create>> Monster(int,String,int,int,int,int)
++ void setup()
++ void defeat()
++ int hp()
++ void setHp(int)
+}
+
+
+class bullet.bones.SansBone {
++ {static} int BOTTOM
++ {static} int TALL_BLUE
++ {static} int TOP
+- {static} Color BLUE_TINT
+- KarmaTicker karma
++ int type
++ double zA
++ double zB
++ double siner
+- double yinit
++ <<Create>> SansBone(EntityManager,Soul,KarmaTicker,int)
++ {static} SansBone sbo(EntityManager,Soul,KarmaTicker,double,double,double,int)
++ void rebase()
++ void update()
+- boolean overlapsSoul()
+- void hitSoul()
+# double boxTop()
+# double boxBottom()
++ void render(Graphics2D)
+- void drawCap(Graphics2D,String,int,int)
+}
+
+
+class bullet.asriel.StormStar {
+- Soul soul
++ boolean big
++ boolean hMode
++ int dmg
+- double speed
+- double dir
+- double targetY
+- int con
+- int frame
+- double scale
+- float alpha
+- float hue
+- double[] tx
+- double[] ty
+- {static} java.util.Map<String,BufferedImage> TINTS
++ <<Create>> StormStar(EntityManager,Soul,double,double,boolean,double,double)
++ void update()
+- void move()
+- boolean reachedBox()
+- void detonate()
+- void spawnStar(double,double,double)
++ void render(Graphics2D)
+- {static} BufferedImage tinted(String,float)
+}
+
+
+class boss.asriel.LostSoulUndyne {
+- {static} GlobalState G
+- {static} double[] GREEN_BOX
+- boolean fakeHit
+- boolean recipe
+- boolean smile
++ <<Create>> LostSoulUndyne()
++ BossBody createBody(EntityManager)
++ SoulMode soulMode()
++ double[] border()
++ List<String> actLabels()
++ List<Integer> actIds()
++ void chooseAttack(EntityManager,Soul)
++ String onAct(int)
++ String freedLine()
++ String introLine()
+}
+
+
+class boss.AsgoreBody {
+- {static} int BODY_X
+- {static} int BODY_Y
+- {static} double SCALE
+- {static} int SPEAR_X
+- {static} double SPEAR_Y0
+- {static} String[] PART
+- {static} int[] PART_X
+- {static} double[] PARTY_BASE
+- {static} BufferedImage redSpear
+- double siner
+- double[] party
+- double spearY
+- double spearAngle
++ boolean swiping
++ int swipeFrame
++ java.awt.Color swipeCue
+- boolean calm
+- int calmFace
+- {static} int CALM_X
+- {static} int CALM_Y
+- boolean kneeling
+- boolean kneelFromCalm
+- double kneelFade
++ int kneelFace
+- {static} int KNEEL_X
+- {static} int KNEEL_Y
++ <<Create>> AsgoreBody(EntityManager)
++ void showCalm(int)
++ void showBattle()
++ void startKneel()
++ boolean kneelComplete()
++ void update()
++ void render(Graphics2D)
+- void renderStanding(Graphics2D,float)
+- void renderTrident(Graphics2D,float)
+- void drawBallArm(Graphics2D,double,double,double,double,double)
+- void drawSpriteExt(Graphics2D,BufferedImage,double,double,double,double,double,int,int)
+- void renderCalm(Graphics2D,float)
+- void renderKneel(Graphics2D)
+- {static} Composite setAlpha(Graphics2D,float)
+- {static} void restore(Graphics2D,Composite,float)
+- {static} BufferedImage tintedSpear()
+}
+
+
+class bullet.mettaton.MettHeartBullet {
+- {static} double HALF
++ <<Create>> MettHeartBullet(EntityManager,Soul,double,double,double,double)
+# double halfWidth()
+# double boxTop()
+# double boxBottom()
++ void update()
++ void render(Graphics2D)
+}
+
+
+class bullet.asriel.StarBlazingGen {
+- Soul soul
+- boolean hard
+- int age
+- boolean bigDropped
+- int dmgVal
++ <<Create>> StarBlazingGen(EntityManager,Soul,boolean,int)
+# void emit()
++ void update()
+}
+
+
+class bullet.gaster.GasterBlaster {
+- {static} double SPRITE_W
+- {static} double SPRITE_H
+- {static} double ORIGIN_X
+- {static} double ORIGIN_Y
+- KarmaTicker karma
++ double idealx
++ double idealy
++ double idealrot
++ double xscale
++ double yscale
++ int pause
++ int terminal
+- int con
+- int wait
+- int frame
+- int btimer
+- double beamWidth
+- double fade
+- double speed
+- double bbsiner
++ <<Create>> GasterBlaster(EntityManager,Soul,KarmaTicker)
++ void update()
+- void flyIn()
+- void fire()
+- boolean beamHitsSoul()
+# double boxTop()
+# double boxBottom()
++ void render(Graphics2D)
+}
+
+
+class boss.MuffetBossTest {
+- {static} GlobalState G
+~ void freshState()
+- {static} void runIntro(BattleScene)
+- {static} void runEnemyTurn(BattleScene)
+~ void setsUpAsTheSpiderBoss()
+~ void everyTurnPutsBulletsOnTheWebAndEnds()
+~ void cannotSpareMidFight()
+~ void survivingAllSixteenTurnsTriggersTheTelegramSpare()
+~ void murderRouteChangesHerDialogue()
+~ void everyAttackRendersWithoutError()
+}
+
+
+class bullet.asriel.ChaosBusterGen {
+- Soul soul
+- AsrielBody body
+- boolean hard
+- int dmgVal
+- double ctimer
+- double prevC
+- boolean home
+- double imageAngle
+- double aaspeed
+- boolean spinning
+- boolean firing
+- int type
+- int maxfire
+- int fire
+- int fireTimer
+- int lTimer
+- boolean meter
+- double metercounter
+- boolean unhinged
+- int unhingeFrame
+- boolean blast
+- double bt
+- int btimer
+- double recoilX
+- double recoilY
+- double jr
+- int flash
+- {static} int[][] WAVES_N
+- {static} int[][] WAVES_H
+- {static} double BOLT_OUT
+- {static} double TELE_OUT
+- {static} double BEAM_OUT
+- int spinStart
+- int meterT
+- int blastT
+- int endT
++ <<Create>> ChaosBusterGen(EntityManager,Soul,AsrielBody,boolean,int)
+- double gunX()
+- double gunY()
+- double fireDir()
+- double aimAtHeart()
+- {static} boolean crossed(double,double,double)
++ void update()
+- void startWave(int[])
+- void fireWave()
+- void starburst()
+- void updateBeam()
++ void render(Graphics2D)
+- void drawGun(Graphics2D)
+- void drawTelegraph(Graphics2D)
+- void drawMeter(Graphics2D)
+- {static} BufferedImage tint(BufferedImage,Color)
+- void drawBeam(Graphics2D)
+}
+
+
+class bullet.mettaton.ParasolMett {
+- {static} double HALF
+- double frame
+- double sway
+- boolean thrown
++ <<Create>> ParasolMett(EntityManager,Soul,double,double,double)
+# double halfWidth()
+# double boxTop()
+# double boxBottom()
++ void update()
++ boolean hitBy(double,double)
++ boolean onShot()
++ void render(Graphics2D)
+}
+
+
+class boss.PapyrusBossTest {
+- {static} GlobalState G
+~ void freshState()
+~ void fightLoopCyclesAndReachesSpare()
+~ void keyboardDrivesMenuFightFlow()
+~ void genocideRouteOneShotsAndGivesGenocideSpeech()
+- {static} void tapConfirm(InputHandler,BattleScene)
+~ void boneDamagesMovingSoul()
+~ void blueBoneIsSafeWhenStill()
+}
+
+
+class bullet.mettaton.BombBlockGen {
+- Soul soul
+- int interval
+- double speed
+- int timer
+- int row
++ <<Create>> BombBlockGen(EntityManager,Soul,int,double)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class battle.MercySystem {
+- {static} GlobalState G
++ {static} int FULL
++ {static} int BROKEN
++ void reset()
++ void setMercyMod(int)
++ void addMercy(int)
++ void setBrokenMercy()
++ boolean isBrokenMercy()
++ boolean isSpareAvailable()
++ boolean canSpare()
++ boolean spare()
+}
+
+
+class boss.UndyneBody {
+- {static} GlobalState G
+- {static} double SCALE
+~ {static} int BODY_X
+~ {static} int BODY_Y
+- {static} int HEAD_X
+- {static} int HAIR_X
+- {static} int ARMOR_X
+- {static} int RARM_X
+- {static} int PANTS_X
+- {static} int LARM_X
+- {static} int LEGS_X
+- {static} int LARM_ORIGIN_X
+- double siner
+- double hairFrame
++ double dim
+- boolean melting
+- double bodyAlpha
+- double meltAlpha
+- int meltFrame
++ <<Create>> UndyneBody(EntityManager)
++ void startMelt()
++ void setMeltFrame(int)
++ boolean meltGone()
++ void update()
++ void render(Graphics2D)
+- int faceFrame()
+- void part(Graphics2D,String,int,int,int)
+- void drawMelt(Graphics2D)
+- {static} Composite setAlpha(Graphics2D,float)
+- {static} void restore(Graphics2D,Composite)
+}
+
+
+class bullet.asgore.LinearFire {
++ double direction
++ double speed
++ double friction
++ <<Create>> LinearFire(EntityManager,Soul)
++ void aimAt(double,double,double,double)
+# void move()
+}
+
+
+class boss.SansBody {
+- {static} GlobalState G
+- SansBoss boss
+- Soul soul
+- BulletBoard board
+- KarmaTicker karma
++ int bounce
+- int siner
+- double yoff
+- double xoff
+- int movearm
+- double armI
+- double aspeed
+- double headx
+- double heady
+- int facetype
+- int fI
++ int sweat
+- int dodgePhase
+- int dodgeT
+- double dodgeX
+- double dodgeH
+- boolean smasher
+- int smashcon
+- int smashdir
+- int prevsmash
+- int smashlv
+- int smashamt
+- {static} int SMASH_MAX
+- int smashAlarm
+- int xtimer
+- int[] smashSeq
+- boolean platgen
+- int platgenType
+- int[] pgAlarm
+- int pgG
+- int pgGg
+- int pgGg2
+- int pgSd
+- boolean pgSkl
+- int fac
+- int facTimer
+- int facNext
+- {static} int SUB_SQUEEZE
+- {static} int SUB_GATES
+- {static} int SUB_TRAIN
+- {static} int SUB_BLUEPAIR
+- {static} int SUB_WAVE_L
+- {static} int SUB_WAVE_R
+- {static} int SUB_PLATFORMS
+- {static} int SUB_PLATFORMS_M
+- {static} int SUB_SLIDES
+- {static} int SUB_XBLAST
+- {static} int SUB_SMASH
+- int chain
+- int chainStep
+- int chainTimer
++ int lac
+- int lacTimer
+- int lacNext
+- int intensity
+- double gt
+- double gin
+- boolean everyOther
+- int lcT
+- int lcC
+- int lcA
+- int dd
+- int pdd
+- boolean repeater
+- double rpX
+- {static} double[] SLEEP_BOX
+- {static} int[] BUTTON
+- {static} double BOX_SIZE
+- {static} double PUSH_MIN_X
+- {static} double PUSH_MAX_Y
+- int sleepPhase
+- int sleepT
+- int sleepCountdown
+- double sleepEx
+- double sleepEy
+- boolean showButton
+- int zClock
+- boolean buttonLit
+- boolean sleepPinned
+- boolean injured
+- {static} int END_SPEECH_FRAMES
+- {static} String[] SNORE
++ <<Create>> SansBody(EntityManager,SansBoss,Soul,BulletBoard,KarmaTicker)
+~ {static} int chooseInt(int)
++ void setAttack(int)
++ void startSmasher(int)
++ void startSmasher(int,int[])
++ void startFinal()
++ void showInjured()
++ void startOpening()
++ boolean specialRunning()
++ void beginStep()
++ void update()
+- SansBone sbo(double,double,double,int)
+- void bwall(double,double,double,int)
+- BonePlatform hplat(double,double,double,double)
+- BoneWall wall(double,double,double,double,boolean)
+- void soulStopRed()
+- void centerSoul()
+- void spawnAttack(int)
+- void loop(double,double,double)
+- void randomWalls(int,int,int,int,int,int,int,int,double)
+- void startPlatgen(int)
+- void stepPlatgen()
+- void platgenAlarm(int)
+- int pickLane()
++ void startChain(int,boolean)
+- int[] chainSubs()
+- void stepChain()
+- void advanceChain()
+- void flashCut()
+- void enterSub(int)
+- void wideBorder()
+- void blueFloor()
+- SansBone boneAtX(double,double,double,int)
+- void subSqueeze()
+- void subGates()
+- void subTrain()
+- void subBluePair()
+- void subWave(boolean)
+- void subPlatforms(boolean)
+- void subSlides()
+- void subXBlasters()
+- void stepSmasher()
+- int nextSmashdir()
+- void endSmasher()
+~ void skipMonologueTimer()
+- void armForSmashdir(int)
+- void facWait(int,int)
+- GasterBlaster blasterAt(double,double,double,double,double,double,int,int)
+- void stepFac()
+- void slamWall(int,boolean)
+- void slamDd(int,boolean)
+- void waitThen(int,int)
+- void stepLac()
+- void stab(int,double)
+- void monologue(SansBoss.Line[],int)
+- void monologue(SansBoss.Line[],int,boolean)
+- void corridorGrid()
+- void stepRing()
+- void stepSlamLoop()
+- void stepSleep()
+- void stepSnore()
+- void fallAsleep()
+- void stepPush()
+- boolean soulOnButton()
+- void stepBounce()
++ void sneakAttack()
++ void dodge()
+- void stepDodge()
+- void stepRepeater()
+- double y()
++ void render(Graphics2D)
+- int cleanFace(int)
+- {static} int torsoOriginX(int)
+- int cleanTorso(int)
+- void drawArm(Graphics2D,String,int,boolean,double)
+- void drawPart(Graphics2D,String,int,double,double,int,int)
+- void renderSleepFurniture(Graphics2D)
+}
+
+
+abstract class boss.BossBody {
+# int attackSel
+# <<Create>> BossBody(EntityManager)
++ void setAttack(int)
+}
+
+
+class boss.MettatonExBody {
+- {static} GlobalState G
+- {static} double SCALE
+- {static} double BODY_X
+- double bodyY
+- {static} String[] LEG_SPRITE
+- {static} int[] LEG_XOFF
+- {static} int[] LEG_YOFF
+- {static} int[] LEG_H
+- {static} int STAND_LEG
+- {static} String[] ARM_SPRITE
+- {static} java.util.Map<String,int[]> ORIGIN
+- double siner
+- int legl
+- int legr
+- int arml
+- int armr
+- int faceno
+- double legh
++ int dancewait
+- int danceTimer
++ int dance
++ boolean noarm
++ int pause
+- int hurt
+- int hurtface
++ boolean faceSet
++ boolean endface
++ boolean heartdead
+- float myalpha
++ boolean fadewhite
+- double whiteval
+- boolean fadeComplete
++ Soul soul
++ java.util.function.IntConsumer onScore
++ <<Create>> MettatonExBody(EntityManager)
+- void restPose()
++ boolean fadeComplete()
++ void blowOffArms()
++ void randomizePose()
++ void update()
++ void render(Graphics2D)
+- void drawFace(Graphics2D,double,double,double)
+- void renderFadeWhite(Graphics2D)
+- void draw(Graphics2D,String,double,double,double,double)
+- {static} int[] origin(String)
+}
+
+
+class bullet.asgore.FireColumnGen {
+- Soul soul
++ int t
++ <<Create>> FireColumnGen(EntityManager,Soul,int)
++ void update()
++ void render(Graphics2D)
+}
+
+
+class bullet.asgore.FireStormGen {
+- Soul soul
++ int lv
+- {static} int MAX_BURSTS
+- double amount
+- double baseAng
+- int timer
+- double dim
+- boolean bursting
++ <<Create>> FireStormGen(EntityManager,Soul,int)
++ void update()
+- void burst()
+- void ring(int,double,double,double)
++ void render(Graphics2D)
+}
+
+
+class boss.SansRedPhaseTest {
+- {static} GlobalState G
+~ void freshState()
+~ void fightEveryTurnRunsRedPhaseAndReachesSleepEnding()
+~ void playerDeathRunsTheShatterAnimationWithoutEndingViaBanner()
+~ void sparingAtTheTurningPointIsATrapThatKillsThePlayer()
+~ void mercyDeathEndingShowsWoundedSansAndWins()
+}
+
+
+class bullet.asriel.GunBolt {
+- double dir
+- double spreadDir
+- double speed
+- int age
++ <<Create>> GunBolt(EntityManager,Soul,double,double,double,double,double,int)
+# double halfWidth()
+# double boxTop()
+# double boxBottom()
+# boolean collidesSoul()
++ void update()
++ void render(Graphics2D)
+}
+
+
+class battle.ActDispatcher {
+- List<String> options
+- List<Integer> whatiheard
++ IntConsumer onAct
++ String checkText
++ void setOptions(List<String>,List<Integer>)
++ List<String> optionLabels()
++ int optionCount()
++ void choose(int)
+}
+
+
+class bullet.toriel.FireHelixGen {
+- Soul soul
+- int type
+- int rate
+- int fireDmg
+- double time
+- int cooldown
++ <<Create>> FireHelixGen(EntityManager,Soul,int,int,int)
++ void update()
+- void emit()
+- void spawnHelix(double,double)
+- void spawnMini(double,double)
++ void render(Graphics2D)
+}
+
+
+class bullet.toriel.FireHelix {
++ int r
++ double time
++ <<Create>> FireHelix(EntityManager,Soul)
++ void spawnClamp()
+# void move()
+}
+
+
+class boss.PapyrusBody {
+- {static} int HEAD_SCALE
+- boolean decap
+- int dt
+- String headSprite
+- double feetY
+- int fullW
+- double headX
+- double headY
+- double headVY
+- double headRestY
+- double bodyAlpha
++ <<Create>> PapyrusBody(EntityManager)
++ void startDecap(boolean)
++ void update()
++ void render(Graphics2D)
+- void renderDecap(Graphics2D)
+- void renderFallback(Graphics2D)
+}
+
+
+class bullet.asriel.ShockerBolt {
+- double thisx
+- double thisy
+- boolean giga
+- double scale
+- double ss
+- boolean sfxPlayed
+- float alpha
+- double hue
+- int frame
++ <<Create>> ShockerBolt(EntityManager,Soul,double,double,int)
+# double halfWidth()
+# double boxTop()
+# double boxBottom()
+- boolean live()
+# boolean collidesSoul()
++ void update()
++ void render(Graphics2D)
+}
+
+
+abstract class bullet.asgore.AsgoreFire {
++ double scale
+# String sprite
+# double anim
+# <<Create>> AsgoreFire(EntityManager,Soul)
+# {abstract}void move()
++ void update()
+- double half()
+# boolean collidesSoul()
+- void cullFarOffscreen()
+# double boxTop()
+# double boxBottom()
++ void render(Graphics2D)
+}
+
+
+class bullet.undyne.SpearBlocker {
+- {static} double SHIELD_R
+- {static} double BLOCK_R
+- {static} double HIT_R
+- Soul soul
+- GreenSpearGen gen
++ int lesson
++ double rating
++ int dmg
++ boolean refuse
++ boolean fireFinisher
+- int blockSide
+- double drawAngle
+- int flash
+- int buffer
+- boolean finisherFired
+- int finisherTimer
++ <<Create>> SpearBlocker(EntityManager,Soul)
++ void begin()
+- {static} double sideAngle(int)
++ void update()
+- void resolveSpears()
++ void render(Graphics2D)
+- {static} void q(GreenSpearGen,int,int,double,double)
+- void buildLesson(int,GreenSpearGen)
+}
+
+
+
+
+boss.BossBody <|-- boss.UndyneXBody
+bullet.AttackPattern <|-- bullet.Bullet
+bullet.AttackPattern <|-- bullet.asgore.HelixFireGen
+bullet.AttackPattern <|-- bullet.asriel.SwordArm
+bullet.AttackPattern <|-- bullet.asgore.HandBullet
+bullet.Shootable <|.. bullet.mettaton.SegArm
+bullet.Bullet <|-- bullet.mettaton.SegArm
+bullet.AttackPattern <|-- bullet.asriel.ShockerTarget
+bullet.AttackPattern <|-- bullet.Generator
+boss.Boss <|-- boss.MuffetBoss
+bullet.Shootable <|.. bullet.mettaton.HeartCore
+bullet.AttackPattern <|-- bullet.mettaton.HeartCore
+bullet.muffet.SpiderBullet <|-- bullet.muffet.DonutBullet
+core.Entity <|-- boss.Boss
+bullet.AttackPattern <|-- bullet.muffet.PetSpecial
+bullet.AttackPattern <|-- bullet.mettaton.MettLeg2Gen
+bullet.Generator <|-- bullet.gaster.GasterBlasterGen
+bullet.AttackPattern <|-- bullet.toriel.HandBullet
+core.Entity <|-- boss.AnnoyingDog
+boss.Boss <|-- boss.AsrielBoss
+bullet.AttackPattern <|-- bullet.mettaton.PlusBlast
+bullet.AttackPattern <|-- bullet.undyne.BlueFinisher
+bullet.Generator <|-- bullet.undyne.RiseSpearGen
+bullet.AttackPattern <|-- bullet.muffet.SpiderBulletGen
+core.Entity <|-- battle.WebBoard
+bullet.AttackPattern <|-- bullet.undyne.FollowSpear2Gen
+java.awt.event.KeyListener <|.. core.InputHandler
+java.awt.KeyEventDispatcher <|.. core.InputHandler
+boss.Boss <|-- boss.UndyneBoss
+bullet.AttackPattern <|-- bullet.mettaton.Ex2Gen
+bullet.AttackPattern <|-- bullet.asgore.SpearSwipe
+bullet.Generator <|-- bullet.asriel.AsrielFireGen
+bullet.toriel.TorielFire <|-- bullet.toriel.MiniHelix
+boss.BossBody <|-- boss.TorielBody
+bullet.Bullet <|-- bullet.bones.BonePlatform
+boss.Boss <|-- boss.PapyrusBoss
+bullet.Bullet <|-- bullet.muffet.VertSpider
+bullet.Bullet <|-- bullet.mettaton.LightningBullet
+bullet.AttackPattern <|-- bullet.asriel.ShockerBreakerGen
+bullet.undyne.GreenSpear <|-- bullet.undyne.BlockSpear2
+boss.BossBody <|-- boss.AsrielBody
+bullet.Bullet <|-- bullet.muffet.SpiderBullet
+core.Entity <|-- battle.BattleMenu
+bullet.AttackPattern <|-- bullet.undyne.GreenSpearGen
+bullet.muffet.SpiderBullet <|-- bullet.muffet.Croissant
+java.awt.Canvas <|-- core.Game
+bullet.AttackPattern <|-- bullet.asriel.HyperGonerGen
+bullet.Shootable <|.. bullet.mettaton.CircleBox
+bullet.Bullet <|-- bullet.mettaton.CircleBox
+bullet.Bullet <|-- bullet.asriel.AngelComet
+boss.Boss <|-- boss.MettatonExBoss
+bullet.Shootable <|.. bullet.mettaton.MettLeg2
+bullet.Bullet <|-- bullet.mettaton.MettLeg2
+bullet.asgore.AsgoreFire <|-- bullet.asgore.HelixFire
+util.Audio +.. util.Audio$Sound
+bullet.AttackPattern <|-- bullet.undyne.GreenSpear
+core.Entity <|-- battle.RatingsMaster
+core.Entity <|-- bullet.AttackPattern
+core.Entity <|-- battle.Soul
+boss.asriel.LostSoul <|-- boss.asriel.LostSoulSkelebros
+bullet.undyne.GreenSpear <|-- bullet.undyne.BlockBullet
+bullet.Shootable <|.. bullet.mettaton.PlusBomb
+bullet.Bullet <|-- bullet.mettaton.PlusBomb
+core.Entity <|-- battle.BulletBoard
+bullet.AttackPattern <|-- bullet.mettaton.RewindGen
+bullet.AttackPattern <|-- bullet.undyne.FollowSpear
+boss.BossBody <|-- boss.AsrielFinalBody
+core.Scene <|.. battle.BattleScene
+bullet.AttackPattern <|-- bullet.asgore.SideDam
+bullet.Generator <|-- bullet.undyne.FollowSpearGen
+bullet.Bullet <|-- bullet.bones.BoneStab
+boss.BossBody <|-- boss.MuffetBody
+bullet.AttackPattern <|-- bullet.mettaton.SideLegGen
+bullet.Bullet <|-- bullet.asriel.RegStar
+bullet.AttackPattern <|-- bullet.asriel.AngelOfDeathGen
+core.Entity <|-- boss.AsrielBackground
+bullet.asgore.AsgoreFire <|-- bullet.asgore.RadialFire
+bullet.Shootable <|.. bullet.mettaton.SolidBlock
+bullet.Bullet <|-- bullet.mettaton.SolidBlock
+bullet.AttackPattern <|-- bullet.mettaton.ParasolGen
+bullet.Bullet <|-- bullet.bones.BoneLoopV
+boss.Boss <|-- boss.SansBoss
+boss.SansBoss +.. boss.SansBoss$Line
+bullet.Bullet <|-- bullet.asriel.AsrielFire
+boss.asriel.LostSoul <|-- boss.asriel.LostSoulAlphys
+boss.Boss <|-- boss.MettatonNeoBoss
+bullet.Shootable <|.. bullet.mettaton.OrbitRing
+bullet.AttackPattern <|-- bullet.mettaton.OrbitRing
+bullet.Bullet <|-- bullet.asriel.SwordTwinkle
+boss.Boss <|-- boss.AsgoreBoss
+boss.asriel.LostSoul <|-- boss.asriel.LostSoulDreemurrs
+bullet.AttackPattern <|-- bullet.asriel.ChaosSaberGen
+bullet.AttackPattern <|-- bullet.muffet.Cupcake
+bullet.AttackPattern <|-- bullet.undyne.RiseSpear
+bullet.AttackPattern <|-- bullet.mettaton.SegArmGen
+bullet.toriel.TorielFire <|-- bullet.toriel.ChaseFire
+bullet.Bullet <|-- bullet.bones.TopBone
+bullet.Generator <|-- bullet.undyne.RotSpearGen
+bullet.AttackPattern <|-- bullet.undyne.FollowSpear2
+bullet.Bullet <|-- bullet.bones.BoneWall
+bullet.AttackPattern <|-- bullet.asgore.SineFireGen
+boss.Boss <|-- boss.TorielBoss
+bullet.AttackPattern <|-- bullet.undyne.RotSpearRing
+bullet.AttackPattern <|-- bullet.asgore.ConvergingFireGen
+bullet.Shootable <|.. bullet.mettaton.DiscoBall
+bullet.AttackPattern <|-- bullet.mettaton.DiscoBall
+boss.BossBody <|-- boss.asriel.LostSoulBody
+boss.asriel.LostSoulBody +.. boss.asriel.LostSoulBody$Part
+bullet.AttackPattern <|-- bullet.asgore.HandBulletGen
+boss.BossBody <|-- boss.MettatonNeoBody
+bullet.AttackPattern <|-- bullet.PlayerBullet
+bullet.Bullet <|-- bullet.bones.SizeBone
+bullet.Bullet <|-- bullet.toriel.TorielFire
+bullet.AttackPattern <|-- bullet.asgore.RandomHandGen
+bullet.AttackPattern <|-- bullet.mettaton.MixDropGen
+core.Scene <|.. battle.BossSelectMenu
+core.Entity <|-- boss.ScreenFlash
+bullet.Bullet <|-- bullet.bones.SansBone
+bullet.AttackPattern <|-- bullet.asriel.StormStar
+boss.asriel.LostSoul <|-- boss.asriel.LostSoulUndyne
+boss.BossBody <|-- boss.AsgoreBody
+bullet.Bullet <|-- bullet.mettaton.MettHeartBullet
+bullet.Generator <|-- bullet.asriel.StarBlazingGen
+bullet.Bullet <|-- bullet.gaster.GasterBlaster
+bullet.AttackPattern <|-- bullet.asriel.ChaosBusterGen
+bullet.Shootable <|.. bullet.mettaton.ParasolMett
+bullet.Bullet <|-- bullet.mettaton.ParasolMett
+bullet.AttackPattern <|-- bullet.mettaton.BombBlockGen
+boss.BossBody <|-- boss.UndyneBody
+bullet.asgore.AsgoreFire <|-- bullet.asgore.LinearFire
+boss.BossBody <|-- boss.SansBody
+core.Entity <|-- boss.BossBody
+boss.BossBody <|-- boss.MettatonExBody
+bullet.AttackPattern <|-- bullet.asgore.FireColumnGen
+bullet.AttackPattern <|-- bullet.asgore.FireStormGen
+bullet.Bullet <|-- bullet.asriel.GunBolt
+bullet.AttackPattern <|-- bullet.toriel.FireHelixGen
+bullet.toriel.TorielFire <|-- bullet.toriel.FireHelix
+boss.BossBody <|-- boss.PapyrusBody
+bullet.Bullet <|-- bullet.asriel.ShockerBolt
+bullet.Bullet <|-- bullet.asgore.AsgoreFire
+bullet.AttackPattern <|-- bullet.undyne.SpearBlocker
+@enduml

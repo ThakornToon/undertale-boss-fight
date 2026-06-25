@@ -36,11 +36,11 @@ a boss from a menu, seed your own stats, and fight. The goal is a faithful port 
 
 The Core battle engine, host loop, boss-select menu, and sound system are complete.
 The **initial-release milestone** shipped five bosses — Papyrus, Sans, Asgore, Undyne,
-and Mettaton — then **Muffet** was added (bringing the new **PURPLE web soul**), and
-most recently **Toriel**, who now sits at the top of the menu as the first boss. Across
-their NORMAL/GENOCIDE variants that's **nine fightable encounters**. They were built
-roughly in order of difficulty (Papyrus < Asgore < Mettaton < Undyne < Sans). **Asriel**
-and any further bosses are out of scope for now (see [Background](#background--why-this-exists)).
+and Mettaton — then **Muffet** was added (bringing the new **PURPLE web soul**), then
+**Toriel**, who now sits at the top of the menu as the first boss, and finally the
+two-part **Asriel Dreemurr** finale. Across their NORMAL/GENOCIDE variants that's **ten
+fightable encounters**. They were built roughly in order of difficulty (Papyrus < Asgore 
+< Muffet < Mettaton < Undyne < Sans <= Asriel), with Asriel last as the most elaborate set-piece.
 
 | Boss                   | Soul mode | Route | Status                                           |
 |------------------------|---|---|--------------------------------------------------|
@@ -53,7 +53,7 @@ and any further bosses are out of scope for now (see [Background](#background--w
 | **Mettaton EX**        | yellow (shoot) | NORMAL | ✅ Playable — ratings meter, 20-turn show, full attack bank, both endings |
 | **Mettaton NEO**       | — | GENOCIDE | ✅ Playable — one-strike cutscene                 |
 | **Muffet**             | **purple (web)** | any | ✅ Playable — 3-strand web, 16-pattern bullet engine, pet special, telegram spare |
-| **Asriel Dreemurr**    | — | — | ⬜ I think not                                    |
+| **Asriel Dreemurr**    | red + all modes | any | ✅ Playable — two parts: the GOD of Hyperdeath gauntlet → the Angel-of-Death SAVE finale (4 Lost-Soul mini-fights) |
 | **Omega Flowey**       | — | — | ⬜ No way!                                        |
 | **Other**              | — | — | ⬜ If I have time                                 |
 
@@ -91,6 +91,17 @@ plain **RED soul** but brings her own `bullet/toriel/` family — the weaving fi
 columns and the sweeping homing hands — plus a second, non-combat way to win: refuse to
 fight long enough and she relents. This port deliberately drops her "holding back" logic,
 so unlike vanilla her bullets deal full damage and the player can actually die.
+
+**Asriel Dreemurr** closed out the roster as by far the biggest set-piece — a single
+boss that is really two chained fights. **Part A**, the GOD of Hyperdeath, is a scripted,
+un-winnable-by-damage gauntlet that walks a fixed table of named attacks (STAR/GALACTA
+BLAZING, SHOCKER BREAKER, CHAOS SABER, CHAOS BUSTER, HYPER GONER) while you survive and
+soften the run with ACT Hope/Dream. **Part B** is the Angel-of-Death SAVE finale: you
+can't win by fighting, only by SAVE-ing — a death-loop unlocks the rainbow SAVE button,
+which opens four **Lost-Soul mini-fights** (each exercising a *different* soul mode and
+reusing an earlier boss's bullet engine: Undyne's GREEN shield, Alphys's YELLOW parasols,
+the skelebros' BLUE bones, the Dreemurrs' RED spiral fire), then SAVE-ing Asriel himself.
+It pulled together nearly every system the earlier bosses had introduced.
 
 ---
 
@@ -308,10 +319,11 @@ UndertaleBossFight/
 │   │   ├── PapyrusBoss/Body, SansBoss/Body, AsgoreBoss/Body
 │   │   ├── UndyneBoss/Body, UndyneXBody, Mettaton{Ex,Neo}Boss/Body
 │   │   ├── MuffetBoss/Body, TorielBoss/Body
+│   │   ├── Asriel{Boss,Body,Background,FinalBody}, asriel/  ← two-part fight + Lost-Soul framework
 │   │   └── AnnoyingDog, ScreenFlash
 │   ├── bullet/      Attack patterns & projectiles
 │   │   ├── Bullet, PlayerBullet, AttackPattern, Generator, Shootable
-│   │   └── asgore/ · bones/ · gaster/ · mettaton/ · muffet/ · toriel/ · undyne/  ← per-boss bullets
+│   │   └── asgore/ · bones/ · gaster/ · mettaton/ · muffet/ · toriel/ · undyne/ · asriel/  ← per-boss bullets
 │   └── util/        Assets (sprite/sound cache), Audio, GMLHelper
 ├── src/main/resources/
 │   ├── images/      ~7,500 sprite frames (white line-art on transparent)
@@ -326,7 +338,7 @@ UndertaleBossFight/
 ## Testing & verification
 
 ```bash
-./gradlew test                               # full suite — 44 tests, JUnit 5
+./gradlew test                               # full suite — 49 tests, JUnit 5
 ./gradlew test --tests "boss.AsgoreBossTest" # one class
 ```
 

@@ -7,6 +7,7 @@ import battle.BattleScene;
 import battle.DamageSystem;
 import battle.Soul;
 import battle.SoulMode;
+import bullet.Bullet;
 import bullet.bones.SizeBone;
 import core.EntityManager;
 import core.GlobalState;
@@ -216,5 +217,73 @@ class PapyrusBossTest {
         damage.resolve();
 
         assertFalse(G.hp < before, "a blue bone must not hurt a stationary blue soul");
+    }
+
+    /**
+     * The finale's super-bone climb (GML {@code blt_coolbus}) must unlock the instant a
+     * coolbus bone crosses into the box ({@code x < idealborder[1]}) — not when the super
+     * bone merely nears it. While that holds and the soul hugs the super bone's left face
+     * holding UP, the ceiling tracks the soul up ({@code idealborder[2] = heart.y - 20})
+     * and the soul gets a steady {@code vspeed = -2} push.
+     */
+    @Test
+    void climbUnlocksWhenCoolbusEntersBox() throws Exception {
+        InputHandler input = new InputHandler();
+        BattleScene scene = new BattleScene(null, input, BossRegistry.PAPYRUS);
+        G.maxhp = 100000;
+        G.hp = 100000;
+
+        scene.update(); // setup → menu
+
+        Boss boss = scene.boss();
+        Soul soul = (Soul) read(scene, "soul");
+        Object board = read(scene, "board");
+
+        // Jump straight to the "regular attack" finale: spawn the coolbus bridge + super bone.
+        write(boss, "fighto", 16);
+        G.mnfight = TurnManager.ENTER_ENEMY;
+        scene.update();
+
+        Bullet superBone = (Bullet) read(boss, "superBone");
+        @SuppressWarnings("unchecked")
+        java.util.List<Bullet> coolbus = (java.util.List<Bullet>) read(boss, "coolbusBones");
+        java.lang.reflect.Method climbStep = boss.getClass().getDeclaredMethod("climbStep");
+        climbStep.setAccessible(true);
+
+        G.mnfight = TurnManager.ENEMY_TURN;
+        soul.setMode(SoulMode.BLUE);
+        soul.upHeld = true;
+        soul.x = superBone.x - 5;          // hugging the super bone's left face
+        soul.y = 200;
+        soul.yprevious = 205;              // rising
+        soul.vspeed = 0;
+
+        // Coolbus still outside the box → the ceiling stays at its resting height.
+        climbStep.invoke(boss);
+        assertTrue((double) read(board, "climbTop") == -1.0,
+                "climb must not unlock before a coolbus bone enters the box");
+
+        // The frame a coolbus bone crosses the right border → the climb is live.
+        coolbus.get(0).x = G.idealborder[1] - 1;
+        soul.upHeld = true;
+        soul.y = 200;
+        soul.yprevious = 205;
+        soul.vspeed = 0;
+        climbStep.invoke(boss);
+        assertTrue((double) read(board, "climbTop") == soul.y - 20,
+                "ceiling should track the soul (idealborder[2] = heart.y - 20) once coolbus is in");
+        assertTrue(soul.vspeed == -2.0, "the climb should give a steady upward push");
+    }
+
+    private static Object read(Object o, String field) throws Exception {
+        java.lang.reflect.Field f = o.getClass().getDeclaredField(field);
+        f.setAccessible(true);
+        return f.get(o);
+    }
+
+    private static void write(Object o, String field, Object value) throws Exception {
+        java.lang.reflect.Field f = o.getClass().getDeclaredField(field);
+        f.setAccessible(true);
+        f.set(o, value);
     }
 }

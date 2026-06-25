@@ -60,6 +60,15 @@ public final class PapyrusBoss extends Boss {
     private Bullet last;
     /** The "regular attack" finale's giant bone — the one the soul climbs over. */
     private Bullet superBone;
+    /** GML: blt_superbone.appear — snap the giant bone to the soul's height once, on entry. */
+    private boolean superBoneAppeared;
+    /**
+     * GML: blt_coolbus instances — the long bone bridge that precedes the super bone.
+     * The climb unlocks the frame one of these crosses into the box (its {@code x <
+     * idealborder[1]}), so we keep references to test that instead of guessing from
+     * the super bone's position.
+     */
+    private final List<Bullet> coolbusBones = new ArrayList<>();
     /** GML: blt_tobydogbone — the Annoying Dog cutscene prop (fighto 15). */
     private AnnoyingDog dog;
 
@@ -233,11 +242,12 @@ public final class PapyrusBoss extends Boss {
     }
 
     /**
-     * The super-bone climb (GML {@code blt_coolbus}). Once the giant bone is sweeping
-     * through the box, holding the jump key against its left face raises the ceiling
-     * to follow the soul up and gives it a steady upward push — so the player can
-     * jump again and again to scale a bone far taller than the box can normally hold.
-     * The box settles back to its resting height once the bone is gone.
+     * The super-bone climb (GML {@code blt_coolbus} Draw event). Once a bone of the
+     * long {@code coolbus} bridge crosses into the box — with the giant
+     * {@code blt_superbone} still in play — holding the jump key against the super
+     * bone's left face raises the ceiling to follow the soul up and gives it a steady
+     * upward push, so the player can jump again and again to scale a bone far taller
+     * than the box can normally hold. The box settles back once the super bone is gone.
      */
     private void climbStep() {
         if (superBone == null || superBone.destroyed
@@ -245,11 +255,27 @@ public final class PapyrusBoss extends Boss {
             board.climbTop = -1;       // not the climb phase: normal box height
             return;
         }
-        // Live once the bone is approaching the box (its finale), giving the player a
-        // head start to climb, and only while the soul hugs its left face holding up.
-        boolean boneInPlay = superBone.x < G.idealborder[1] + 400;
+        // GML blt_superbone: the first frame the giant bone scrolls just inside the
+        // right border (and the soul is over by it), snap its top to the soul's height
+        // — appear == 0 → y = obj_heart.y — so you climb back to where you already were.
+        if (!superBoneAppeared
+                && superBone.x < G.idealborder[1] + 40 && superBone.x > G.idealborder[1] + 10
+                && soul.x > G.idealborder[1] - 60) {
+            superBoneAppeared = true;
+            superBone.y = soul.y;
+        }
+        // GML blt_coolbus: the climb is live the moment a coolbus bone has crossed into
+        // the box (its x < idealborder[1]), not when the super bone nears it — and only
+        // while the soul hugs the super bone's left face holding up.
+        boolean coolbusInBox = false;
+        for (Bullet c : coolbusBones) {
+            if (!c.destroyed && c.x < G.idealborder[1]) {
+                coolbusInBox = true;
+                break;
+            }
+        }
         boolean leftFace = soul.x < superBone.x + 20;
-        if (boneInPlay && leftFace && soul.upHeld && soul.y > 50) {
+        if (coolbusInBox && leftFace && soul.upHeld && soul.y > 50) {
             // GML: idealborder[2] = heart.y - 20 once the soul rises above the resting
             // top — the ceiling tracks it up, letting the box stretch taller.
             if (soul.y < 270) {
@@ -828,11 +854,14 @@ public final class PapyrusBoss extends Boss {
         size(right(2500), 60, -5);     // dbone
         size(right(2540), 60, -5);     // udebone
         size(right(2220), 60, -4);     // skatebone
+        coolbusBones.clear();
         for (int i = 0; i < 9; i++) {
             size(right(1910 + i * 60), 60, -3);   // coolbus (k+10 .. k+490)
+            coolbusBones.add(last);
         }
         size(right(2450), 240, -3);    // SUPER BONE (k+550)
         superBone = last;              // the bone the soul climbs over (blt_superbone)
+        superBoneAppeared = false;
         size(right(970), 20, -1);      // a slow straggler
 
         fighto = 17;

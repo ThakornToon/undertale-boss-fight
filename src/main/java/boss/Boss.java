@@ -134,6 +134,23 @@ public abstract class Boss extends Entity {
         return true;
     }
 
+    /**
+     * GML: Asriel Part B draws the ACT command as the rainbow SAVE button once SAVE is
+     * unlocked ({@code obj_talkbt.spec = 1}). The scene mirrors this onto the menu.
+     */
+    public boolean wantsSaveButton() {
+        return false;
+    }
+
+    /**
+     * Called when the player's HP would hit 0. Return {@code true} to intercept the death
+     * (the boss handles it instead of the game-over scene). Default: let the player die.
+     * GML: Asriel Part B's "But it refused." death-loop restores HP and continues.
+     */
+    public boolean onLethalDamage() {
+        return false;
+    }
+
     /** Boss-specific mnfight==5 special/transform handler. Default: no-op. */
     public void onSpecial() {
     }

@@ -33,6 +33,9 @@ public final class BattleMenu extends Entity {
     private enum Phase { MAIN, ACT, ITEM, MERCY, FIGHTBAR, RESULT }
 
     private static final String[] MAIN_BUTTONS = { "FIGHT", "ACT", "ITEM", "MERCY" };
+
+    /** Asriel Part B: when set, the ACT button is drawn as the rainbow SAVE button. */
+    public boolean saveButton;
     private static final String[] MERCY_OPTIONS = { "Spare", "Flee" };
 
     // GML: the four bottom-row command button sprites. Frame 0 is the yellow
@@ -58,6 +61,10 @@ public final class BattleMenu extends Entity {
 
     private Phase phase = Phase.MAIN;
     private int selected;
+
+    /** Frame counter driving the rainbow SAVE-button flash (GML: obj_talkbt.spec). */
+    private int flashTick;
+    private final java.util.Map<String, BufferedImage> saveTint = new java.util.HashMap<>();
 
     /**
      * GML: {@code obj_sparebt.visible = 0} (Asgore). When set, the MERCY button is
@@ -252,11 +259,23 @@ public final class BattleMenu extends Entity {
 
     /** GML: draw the FIGHT/ACT/ITEM/MERCY button sprites with the heart cursor. */
     private void renderButtons(Graphics2D g) {
+        flashTick++;
         boolean onMain = phase == Phase.MAIN;
         for (int i = 0; i < buttonCount(); i++) {
             boolean sel = onMain && i == selected;
-            BufferedImage img = Assets.sprite(sel ? BUTTON_SEL[i] : BUTTON_IDLE[i]);
-            if (img != null) {
+            String idle = BUTTON_IDLE[i];
+            String selSpr = BUTTON_SEL[i];
+            boolean save = i == 1 && saveButton;
+            if (save) {                     // Asriel Part B: ACT becomes the SAVE button
+                idle = "spr_savebt_1";
+                selSpr = "spr_savebt_0";
+            }
+            BufferedImage img = Assets.sprite(sel ? selSpr : idle);
+            if (save && img != null) {
+                // GML: the SAVE button cycles through the rainbow.
+                Color hue = Color.getHSBColor((flashTick * 0.03f) % 1f, 0.85f, 1f);
+                g.drawImage(rainbow(img, sel ? selSpr : idle, hue), BTN_X[i], BTN_Y, BTN_W, BTN_H, null);
+            } else if (img != null) {
                 g.drawImage(img, BTN_X[i], BTN_Y, BTN_W, BTN_H, null);
             } else {
                 g.setColor(sel ? Color.YELLOW : new Color(0xFF, 0x99, 0x00));
@@ -342,6 +361,33 @@ public final class BattleMenu extends Entity {
             g.setColor(Color.WHITE);
             g.fillRect(lineX - 2, barCy - barH / 2 - 6, 4, barH + 12);
         }
+    }
+
+    /** A rainbow-tinted copy of the SAVE button (luminance × hue), cached per hue bucket. */
+    private BufferedImage rainbow(BufferedImage src, String key, Color hue) {
+        int bucket = (hue.getRed() >> 4 << 8) | (hue.getGreen() >> 4 << 4) | (hue.getBlue() >> 4);
+        String k = key + "#" + bucket;
+        BufferedImage cached = saveTint.get(k);
+        if (cached != null) {
+            return cached;
+        }
+        BufferedImage out = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        for (int y = 0; y < src.getHeight(); y++) {
+            for (int x = 0; x < src.getWidth(); x++) {
+                int argb = src.getRGB(x, y);
+                int a = (argb >>> 24) & 0xFF;
+                if (a == 0) {
+                    continue;
+                }
+                int lum = Math.max(Math.max((argb >> 16) & 0xFF, (argb >> 8) & 0xFF), argb & 0xFF);
+                int r = lum * hue.getRed() / 255;
+                int gg = lum * hue.getGreen() / 255;
+                int b = lum * hue.getBlue() / 255;
+                out.setRGB(x, y, (a << 24) | (r << 16) | (gg << 8) | b);
+            }
+        }
+        saveTint.put(k, out);
+        return out;
     }
 
     /** Draw the red heart selection cursor (sprite, or a vector fallback). */
