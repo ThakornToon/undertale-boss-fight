@@ -324,6 +324,7 @@ public final class UndyneBoss extends Boss {
             return;
         }
         dialogue = phase2Taunt(order);
+        message = phase2Flavor(order);   // GML msg[0] for the next menu (per order)
         soul.setMode(SoulMode.GREEN);
         enterBox(GREEN_BOX);
         G.turntimer = 300;
@@ -335,6 +336,17 @@ public final class UndyneBoss extends Boss {
         order++;
         lesson++;
         G.attacked = 1;
+    }
+
+    // GML obj_undyneboss: the second-phase menu flavor, keyed by order (-40..-36).
+    private static String phase2Flavor(int o) {
+        return switch (o) {
+            case -40 -> "* Undyne is smiling as if  nothing is wrong.";
+            case -39 -> "* Undyne's body is wavering.";
+            case -38 -> "* Undyne's body is losing  its shape.";
+            case -37 -> "* Undyne's body...";
+            default  -> "* ...";
+        };
     }
 
     private static String phase2Taunt(int o) {

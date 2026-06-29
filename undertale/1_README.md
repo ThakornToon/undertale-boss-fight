@@ -3,7 +3,7 @@
 > **Status — ALL TARGET BOSSES COMPLETE.** Core engine, host loop, boss-select menu and
 > sound system are done. Playable: **Toriel · Papyrus · Sans · Asgore · Undyne (NORMAL +
 > GENOCIDE) · Mettaton (EX + NEO) · Muffet · Asriel** — 8 bosses / 10 fight variants.
-> `./gradlew build` → green, **49 tests** pass.
+> `./gradlew build` → green, **50 tests** pass.
 >
 > Title menu seeds run state (no story): **BOSS**, **MAX HP** (LV presets), **MODE**
 > (NORMAL / GENOCIDE — seeds `murderlv≥7`/`lv`/`at` so bosses fall in one hit and use
@@ -146,6 +146,12 @@ selector, set `turntimer`/`firingrate`/border) · `onAct` · `onSpare` · `onDam
     the frame a `coolbus` bone crosses into the box (`x < idealborder[1]`), faithful to GML
     `blt_coolbus`, instead of guessing from the super bone's position (`+400`); tracks the
     coolbus instances + added `blt_superbone.appear` y-snap. `climbUnlocksWhenCoolbusEntersBox`.
+45. **Dead-code / access-modifier cleanup** — removed unused fields (`Soul.shieldDir`,
+    `BulletBoard.solid`, `ActDispatcher.checkText`, `BorderSetup.VIEW_W/H`,
+    `AsgoreBody.swipeFrame/swipeCue`), uncalled public methods (`DamageSystem.playerHurt`,
+    `MercySystem.addMercy`, `BulletBoard.shrinkTo`, `SansBone.rebase`,
+    `LostSoul.alreadyFreedLine`), dead params (`AsgoreBody.restore` alpha, `BlockSpear2`
+    rating) + their call sites, and an unused import. Build green, 50 tests.
 
 ---
 
@@ -159,7 +165,11 @@ selector, set `turntimer`/`firingrate`/border) · `onAct` · `onSpare` · `onDam
   a_type 12/13); genocide `death_c` kill cutscene not ported (asleep FIGHT = spare ending).
 - **Papyrus:** no FIGHT timing bar (can't be FIGHT-killed); `fighto 16` draws plain bones.
 - **Asgore:** story omitted; trident is a static angled sprite (not live IK); FIGHT uses
-  ×4/min-100 compensation so 3500 HP is grindable.
+  ×4/min-100 compensation so 3500 HP is grindable. Opening cutscene is **locked to the
+  "Bergentrückung" prelude** (played once via `Audio.playMusicOnce`): the narration/farewell
+  beats are paced across the track's real playback position and the cut to the fight (→
+  `mus_vsasgore`) fires the instant it ends. Headless renders/tests fall back to a fixed
+  690-frame budget; the neutral intro is no longer Z-skippable.
 - **Undyne:** dialogue-then-attack collapsed (taunt shows during attack); body jump/slash
   animations not ported; GENOCIDE uses a simplified phase schedule + fixed 15000 HP; green
   shield is a 4-side block check (GML line geometry simplified).

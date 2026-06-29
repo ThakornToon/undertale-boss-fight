@@ -51,7 +51,6 @@ public final class BulletBoard extends Entity {
     public double lerpSpeed = 0.25;
 
     public boolean visible = true;
-    public boolean solid = true;
     /**
      * Cosmetic rock of the whole box (degrees), used by Muffet's pet special to
      * tilt the "pulled-paper" web left/right. Visual only — the logical idealborder
@@ -102,11 +101,6 @@ public final class BulletBoard extends Entity {
         ideal[1] = right;
         ideal[2] = top;
         ideal[3] = bottom;
-    }
-
-    /** Animate the box to a smaller centered region. */
-    public void shrinkTo(double left, double right, double top, double bottom) {
-        slide(left, right, top, bottom);
     }
 
     /**

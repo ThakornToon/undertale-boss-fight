@@ -338,7 +338,7 @@ UndertaleBossFight/
 ## Testing & verification
 
 ```bash
-./gradlew test                               # full suite — 49 tests, JUnit 5
+./gradlew test                               # full suite — 50 tests, JUnit 5
 ./gradlew test --tests "boss.AsgoreBossTest" # one class
 ```
 

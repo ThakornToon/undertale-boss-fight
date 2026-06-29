@@ -17,6 +17,7 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.util.List;
+import javax.sound.sampled.Clip;
 import util.GMLHelper;
 
 /**
@@ -63,6 +64,9 @@ public final class AsgoreBoss extends Boss {
     private int introStep;
     private int introTimer;
     private int sliceFlash;     // genocide: the white "cut" flash
+    // The one-shot "Bergentrückung" prelude. The neutral intro is paced against this
+    // clip's real playback position so the cut to the fight lands exactly on its end.
+    private Clip introMusic;
 
     // GML obj_asgore_finalintro narration (the four DETERMINATION boxes).
     private static final String[] NARRATION = {
@@ -71,14 +75,19 @@ public final class AsgoreBoss extends Boss {
         "* (It seems your journey is finally over.)",
         "* (You're filled with DETERMINATION.)",
     };
-    private static final int[] NARRATION_FRAMES = { 110, 110, 110, 130 };
+    // The neutral intro's seven beats (4 narration + 3 farewell) and their relative
+    // weights. The cutscene is paced across the "Bergentrückung" prelude by these
+    // weights, so the farewell lands exactly as the track ends and the fight cuts in
+    // (see {@link #introProgress}). Used as the fallback frame budget when there's no
+    // audio (headless renders/tests).
+    private static final int[] NEUTRAL_BEAT_FRAMES = { 110, 110, 110, 130, 60, 90, 80 };
+    private static final int NEUTRAL_TOTAL_FRAMES = 690;
     // Asgore's farewell. The intro pose is his calm, eyes-closed face
     // (spr_asgore_bface frame 4) throughout — frames 0–3 are open-eyed/alert and
     // read as "surprised", which is wrong for this resigned moment.
     private static final int CALM_FACE = 4;
     private static final String[] FAREWELL = { "Human...", "It was nice to meet you.", "Goodbye." };
     private static final int[] FAREWELL_FACE = { CALM_FACE, CALM_FACE, CALM_FACE };
-    private static final int[] FAREWELL_FRAMES = { 60, 90, 80 };
     // Genocide tea offer (GML: \E1 ... face 1 throughout).
     private static final String[] TEA = {
         "Now, now.", "There's no need to fight.", "Why not settle this...", "Over a nice cup of tea?",
@@ -101,9 +110,11 @@ public final class AsgoreBoss extends Boss {
 
     @Override
     public String musicPath() {
-        // The fight opens on the slow "Bergentrückung" during the cutscene; once it
-        // cuts to the real fight (startFight) we switch to "ASGORE" (mus_vsasgore).
-        return "/audio/mus_bergentruckung.ogg";
+        // Self-managed: the slow "Bergentrückung" prelude is played as a one-shot in
+        // setup() so the opening cutscene can be synced to it (returning a path here
+        // would make BattleScene loop it instead). Once the prelude ends, startFight()
+        // cuts to "ASGORE" (mus_vsasgore).
+        return null;
     }
 
     @Override
@@ -141,6 +152,11 @@ public final class AsgoreBoss extends Boss {
         // ACT: CHECK (whatiheard 0) and TALK (3). TALK is the only thing that ever
         // softens him, and only on a pacifist run (kills == 0).
         act.setOptions(List.of("Check", "Talk"), List.of(0, 3));
+
+        // The slow "Bergentrückung" prelude plays once (not looped): the neutral intro
+        // is paced against it so the farewell ends exactly as the track does. Null when
+        // audio is off (headless renders/tests) — the intro then falls back to frames.
+        introMusic = util.Audio.playMusicOnce("/audio/mus_bergentruckung.ogg");
 
         // GML: the fight opens in the cutscene; stay on mnfight 99 until it ends.
         G.mnfight = TurnManager.SETUP;
@@ -316,34 +332,65 @@ public final class AsgoreBoss extends Boss {
 
     private void updateIntro() {
         introTimer++;
-        boolean advance = soul.confirmPressed;   // Z skips ahead, else auto-advance.
         if (genocide) {
-            updateGenocideIntro(advance);
+            // Genocide isn't music-synced (it ends in defeat, no cut to the fight), so
+            // it keeps the original auto-advance + Z-skip pacing.
+            updateGenocideIntro(soul.confirmPressed);
         } else {
-            updateNeutralIntro(advance);
+            updateNeutralIntro();
         }
     }
 
-    /** GML obj_asgore_finalintro (murder == 0): narration → farewell → cut to fight. */
-    private void updateNeutralIntro(boolean advance) {
-        if (introStep < NARRATION.length) {
-            dialogue = "";   // narration draws in the box area, not the speech bubble
-            if (advance || introTimer >= NARRATION_FRAMES[introStep]) {
-                nextIntroStep();
-            }
+    /**
+     * GML obj_asgore_finalintro (murder == 0): narration → farewell → cut to fight.
+     *
+     * <p>The seven beats are paced across the "Bergentrückung" prelude (see
+     * {@link #introProgress}), so the farewell lands as the track ends and the cut to
+     * the fight is locked to the music. Not skippable — the prelude plays in full.
+     */
+    private void updateNeutralIntro() {
+        double progress = introProgress();
+        if (progress >= 1.0) {
+            // Cut to the fight: battle pose, the box appears, "ASGORE attacks!", his turn.
+            startFight();
             return;
         }
-        int f = introStep - NARRATION.length;
-        if (f < FAREWELL.length) {
+        // Map elapsed progress onto the beat whose weighted slice we're in.
+        int elapsed = (int) Math.round(progress * NEUTRAL_TOTAL_FRAMES);
+        int acc = 0;
+        int beat = 0;
+        while (beat < NEUTRAL_BEAT_FRAMES.length - 1 && elapsed >= acc + NEUTRAL_BEAT_FRAMES[beat]) {
+            acc += NEUTRAL_BEAT_FRAMES[beat];
+            beat++;
+        }
+        introStep = beat;
+        if (beat < NARRATION.length) {
+            dialogue = "";   // narration draws in the box area, not the speech bubble
+        } else {
+            int f = beat - NARRATION.length;
             dialogue = FAREWELL[f];
             abody.showCalm(FAREWELL_FACE[f]);
-            if (advance || introTimer >= FAREWELL_FRAMES[f]) {
-                nextIntroStep();
-            }
-            return;
         }
-        // Cut to the fight: battle pose, the box appears, "ASGORE attacks!", his turn.
-        startFight();
+    }
+
+    /**
+     * How far the neutral intro is through the "Bergentrückung" prelude, 0..1. Driven
+     * by the clip's real playback position when audio is on; otherwise (headless) it
+     * falls back to a fixed frame budget so renders/tests still advance.
+     */
+    private double introProgress() {
+        if (introMusic != null) {
+            long length = introMusic.getMicrosecondLength();
+            if (length > 0) {
+                // The one-shot clip stops at its end; treat "stopped" as fully done so a
+                // few microseconds of slack at the tail can't strand the cutscene.
+                if (introTimer > 2 && !introMusic.isRunning()) {
+                    return 1.0;
+                }
+                return Math.min(1.0, introMusic.getMicrosecondPosition() / (double) length);
+            }
+        }
+        return Math.min(1.0, introTimer / (double) NEUTRAL_TOTAL_FRAMES);
     }
 
     /** GML obj_asgore_finalintro (murder == 1): tea offer → slice → kneel → defeat. */

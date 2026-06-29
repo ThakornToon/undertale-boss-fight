@@ -1,7 +1,6 @@
 package bullet;
 
 import battle.Soul;
-import battle.SoulMode;
 import core.EntityManager;
 
 /**

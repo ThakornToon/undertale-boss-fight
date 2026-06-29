@@ -122,8 +122,8 @@ public final class MettatonExBoss extends Boss {
         damage.playerDamageMultiplier = 6;
         damage.playerMinDamage = 40;
 
-        // The RATINGS meter occupies the top-left corner the HP header would use.
-        hideHpHeader = true;
+        // The RATINGS meter sits top-left; the HP bar still shows top-right like
+        // every other boss, so the player can see the damage they're landing.
 
         // ACT: Check, Pose (Dramatic), Boast, Heel turn.
         act.setOptions(List.of("Check", "Pose", "Boast", "Heel Turn"), List.of(0, 1, 3, 4));
@@ -161,6 +161,18 @@ public final class MettatonExBoss extends Boss {
         // Longer turns so slow patterns (parasols gliding from the top) fully play out;
         // turn 11 (example_10) is the short break.
         G.turntimer = turns == 11 ? 90 : 400;
+
+        // GML obj_mettatonex: refresh the menu flavor every turn so the previous
+        // player action's result text ("* You strike!" / an ACT line) never lingers
+        // into the next MAIN menu.
+        message = util.GMLHelper.random(100) >= 90 ? "* Smells like Mettaton." : "* Mettaton.";
+        if (G.mercymod > 100) {
+            message = "* Monster seems satisfied.";
+        }
+        if (stats.hp() <= stats.maxhp / 4) {
+            message = "* Mettaton has low HP.";
+        }
+
         G.attacked = 1;
     }
 

@@ -16,10 +16,6 @@ public final class BorderSetup {
     private BorderSetup() {
     }
 
-    /** Screen dimensions of the GML play field. */
-    public static final int VIEW_W = 640;
-    public static final int VIEW_H = 480;
-
     // The standard small command box, centered horizontally, sitting low.
     private static final double DEF_L = 32;
     private static final double DEF_R = 608;

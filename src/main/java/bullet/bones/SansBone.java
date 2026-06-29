@@ -56,11 +56,6 @@ public final class SansBone extends Bullet {
         return b;
     }
 
-    /** Keep the wobble centred where the bone currently sits (after x/y tweaks). */
-    public void rebase() {
-        yinit = y;
-    }
-
     @Override
     public void update() {
         if (G.turntimer <= 0) {

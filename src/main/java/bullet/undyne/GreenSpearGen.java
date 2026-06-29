@@ -95,14 +95,14 @@ public final class GreenSpearGen extends AttackPattern {
             manager.add(b);
             cooldown = Math.max(1, Math.round(rating * timemod));
         } else if (type == 1) {
-            BlockSpear2 b = new BlockSpear2(manager, cx, cy, dir, speedmod, rating);
+            BlockSpear2 b = new BlockSpear2(manager, cx, cy, dir, speedmod);
             b.spawnDist = laneFor(b.site);   // site = the physical spawn side
             b.dmg = dmg;
             manager.add(b);
             cooldown = Math.max(1, Math.round(rating * timemod));
         } else {
             // Saver pair: a weave from timemod's side + a straight from speardir's side.
-            BlockSpear2 sp = new BlockSpear2(manager, cx, cy, (int) timemod, speedmod, rating);
+            BlockSpear2 sp = new BlockSpear2(manager, cx, cy, (int) timemod, speedmod);
             sp.spawnDist = laneFor(sp.site);
             sp.dmg = dmg;
             manager.add(sp);

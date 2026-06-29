@@ -70,9 +70,4 @@ public abstract class LostSoul {
     public String introLine() {
         return "* The Lost Soul appeared.";
     }
-
-    /** Shown if the player SAVEs a friend who is already freed. */
-    public String alreadyFreedLine() {
-        return "* " + name + " remembers you.";
-    }
 }

@@ -80,15 +80,6 @@ public final class DamageSystem {
         util.Audio.play(util.Audio.SFX_HURT);   // GML: snd_hurt when the SOUL is hit
     }
 
-    /** Direct hurt that bypasses the soul collision flag (scripted damage). */
-    public void playerHurt(int rawDmg) {
-        if (G.inv > 0) {
-            return;
-        }
-        applyPlayerDamage(rawDmg);
-        G.inv = 30;
-    }
-
     // ---- Player attacks the monster ----------------------------------------
 
     /**

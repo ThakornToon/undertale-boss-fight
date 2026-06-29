@@ -31,7 +31,7 @@ public final class BlockSpear2 extends GreenSpear {
     private int relocTimer;
 
     public BlockSpear2(EntityManager manager, double cx, double cy,
-                       int blockSide, double speedmod, double rating) {
+                       int blockSide, double speedmod) {
         super(manager, cx, cy, opposite(blockSide), speedmod);
         this.blkSide = blockSide;
         this.spawnAng = sideAngle(opposite(blockSide));

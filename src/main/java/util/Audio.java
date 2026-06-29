@@ -115,6 +115,21 @@ public final class Audio {
      * can't be loaded/decoded. GML: caster_loop.
      */
     public static Clip loop(String resourcePath) {
+        return openMusic(resourcePath, true);
+    }
+
+    /**
+     * Play a track once (no loop), replacing any current music. Returns the
+     * {@link Clip} so the caller can poll its playback position / length and sync a
+     * cutscene to it (e.g. Asgore's intro, which cuts to the fight the instant the
+     * "Bergentrückung" prelude ends), or {@code null} if it can't be loaded.
+     */
+    public static Clip playMusicOnce(String resourcePath) {
+        return openMusic(resourcePath, false);
+    }
+
+    /** Shared music loader: open {@code resourcePath} on the music bus and start it. */
+    private static Clip openMusic(String resourcePath, boolean loopForever) {
         stopMusic();
         if (!enabled) {
             return null;
@@ -128,7 +143,11 @@ public final class Audio {
             clip.open(pcm);
             music = clip;
             setVolume(clip, 1.0);
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
+            if (loopForever) {
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            } else {
+                clip.start();
+            }
             return clip;
         } catch (Exception e) {
             return null;

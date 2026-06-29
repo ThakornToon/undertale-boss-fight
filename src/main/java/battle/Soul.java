@@ -59,7 +59,6 @@ public final class Soul extends Entity {
 
     // Green-soul block state. facing: 0=right,1=up,2=left,3=down.
     public int facing = 1;
-    public int shieldDir = 1;
 
     // Purple-soul (web) state — GML obj_purpleheart. The web geometry (line spacing,
     // count, scroll) lives on {@link WebBoard}; these track where the heart rides it.
@@ -275,7 +274,6 @@ public final class Soul extends Entity {
         } else if (downHeld) {
             facing = 3;
         }
-        shieldDir = facing;
         // No translation: the green soul stays put.
     }
 

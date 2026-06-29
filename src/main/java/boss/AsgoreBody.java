@@ -61,8 +61,6 @@ public final class AsgoreBody extends BossBody {
 
     // ---- Swing takeover (driven by SpearSwipe; the swipe draws the body itself) ----
     public boolean swiping;
-    public int swipeFrame;
-    public java.awt.Color swipeCue;
 
     // ---- Calm intro pose (spr_asgore_prebrandish + spr_asgore_bface) ---------------
     private boolean calm;
@@ -159,7 +157,7 @@ public final class AsgoreBody extends BossBody {
             g.drawImage(img, px, py,
                     (int) (img.getWidth() * SCALE), (int) (img.getHeight() * SCALE), null);
         }
-        restore(g, old, alpha);
+        restore(g, old);
     }
 
     // ---- The trident + hands + ball-arms (GML obj_asgorespear, exact port) ---------
@@ -217,7 +215,7 @@ public final class AsgoreBody extends BossBody {
         if (hl != null) {
             drawSpriteExt(g, hl, sx - xh, sy - yh, SCALE, SCALE, angle, 10, 7);
         }
-        restore(g, old, alpha);
+        restore(g, old);
     }
 
     /** GML: stretch the 20×20 ball-arm sprite from {@code (px,py)} to the grip. */
@@ -269,7 +267,7 @@ public final class AsgoreBody extends BossBody {
             g.drawImage(face, CALM_X + 138, CALM_Y - 12,
                     (int) (face.getWidth() * SCALE), (int) (face.getHeight() * SCALE), null);
         }
-        restore(g, old, alpha);
+        restore(g, old);
     }
 
     // ---- Kneel ending --------------------------------------------------------------
@@ -297,7 +295,7 @@ public final class AsgoreBody extends BossBody {
             g.drawImage(face, KNEEL_X + 136, KNEEL_Y - 8,
                     (int) (face.getWidth() * SCALE), (int) (face.getHeight() * SCALE), null);
         }
-        restore(g, old, (float) kneelFade);
+        restore(g, old);
     }
 
     // ---- Alpha helpers -------------------------------------------------------------
@@ -311,7 +309,7 @@ public final class AsgoreBody extends BossBody {
         return old;
     }
 
-    private static void restore(Graphics2D g, Composite old, float alpha) {
+    private static void restore(Graphics2D g, Composite old) {
         if (old != null) {
             g.setComposite(old);
         }

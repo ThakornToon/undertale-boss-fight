@@ -36,7 +36,8 @@ class MettatonExBossTest {
         BattleScene s = scene();
         assertEquals(1600, G.monstermaxhp[G.myself], "EX HP from scr_monstersetup");
         assertEquals(4000, G.ratings, "ratings start at 4000");
-        assertTrue(s.boss().hideHpHeader, "the RATINGS meter replaces the HP header");
+        assertFalse(s.boss().hideHpHeader,
+                "the RATINGS meter sits top-left, but the HP bar still shows top-right");
         assertEquals(TurnManager.MENU, G.mnfight, "the show opens straight on the menu");
     }
 

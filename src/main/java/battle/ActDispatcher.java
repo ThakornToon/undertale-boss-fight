@@ -23,9 +23,6 @@ public final class ActDispatcher {
     /** Boss-supplied handler: receives the chosen {@code whatiheard} id. */
     public IntConsumer onAct = id -> { };
 
-    /** Shared CHECK line; bosses may override per CHECK option. */
-    public String checkText = "* Check.";
-
     /** Boss replaces the ACT option set at the start of its turn / setup. */
     public void setOptions(List<String> labels, List<Integer> ids) {
         options.clear();

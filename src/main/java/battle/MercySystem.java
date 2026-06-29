@@ -31,14 +31,6 @@ public final class MercySystem {
         G.mercymod = mod;
     }
 
-    /** GML: add to the mercy meter (e.g. after a successful ACT). */
-    public void addMercy(int amount) {
-        if (G.mercy == BROKEN) {
-            return; // broken mercy never moves
-        }
-        G.mercy = Math.min(FULL, G.mercy + amount);
-    }
-
     /** Asgore: shatter the SPARE option. */
     public void setBrokenMercy() {
         G.mercy = BROKEN;
